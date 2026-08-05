@@ -1,0 +1,22 @@
+import { Sidebar } from "@/components/layout/sidebar";
+import { Header } from "@/components/layout/header";
+
+/**
+ * Layout do painel administrativo.
+ * Inclui sidebar fixa e header com busca e actions.
+ */
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="min-h-screen bg-creme">
+      <Sidebar />
+      <div className="ml-64">
+        <Header />
+        <main className="p-6">{children}</main>
+      </div>
+    </div>
+  );
+}

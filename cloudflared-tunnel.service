@@ -1,0 +1,18 @@
+[Unit]
+Description=Cloudflare Tunnel - Clinica PWA
+After=network-online.target clinica-pwa.service
+Wants=network-online.target
+Requires=clinica-pwa.service
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/local/bin/cloudflared tunnel --url http://localhost:3000
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cloudflared-clinica
+
+[Install]
+WantedBy=multi-user.target
