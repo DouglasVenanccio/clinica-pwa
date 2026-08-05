@@ -121,8 +121,7 @@ async function main() {
     create: {
       usuarioId: prof1.id,
       especialidade: "Estetica Facial e Corporal",
-      biografia: "Especialista em tratamentos faciais e corporais com 10 anos de experiencia.",
-      tempoServicoMin: 60,
+      bio: "Especialista em tratamentos faciais e corporais com 10 anos de experiencia.",
     },
   });
 
@@ -132,8 +131,7 @@ async function main() {
     create: {
       usuarioId: prof2.id,
       especialidade: "Fisioterapia Ortopedica",
-      biografia: "Fisioterapeuta especializado em reabilitacao ortopedica e esportiva.",
-      tempoServicoMin: 50,
+      bio: "Fisioterapeuta especializado em reabilitacao ortopedica e esportiva.",
     },
   });
 
@@ -143,8 +141,7 @@ async function main() {
     create: {
       usuarioId: prof3.id,
       especialidade: "Massagem Terapeutica",
-      biografia: "Terapeuta especializado em massagens relaxantes e terapeuticas.",
-      tempoServicoMin: 60,
+      bio: "Terapeuta especializado em massagens relaxantes e terapeuticas.",
     },
   });
 
