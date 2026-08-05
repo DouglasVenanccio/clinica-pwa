@@ -1,114 +1,28 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Dashboard | Beleza & Bem-Estar",
-  description: "Painel administrativo da clinica.",
-};
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Wallet, TrendingUp, Users, Scissors, CalendarDays, Loader2 } from "lucide-react";
 
-/**
- * KPI cards do dashboard.
- */
-const kpis = [
-  {
-    label: "Agendamentos Hoje",
-    value: "12",
-    change: "+3 vs ontem",
-    positive: true,
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Receita do Mes",
-    value: "R$ 18.500",
-    change: "+12% vs mes anterior",
-    positive: true,
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Clientes Ativos",
-    value: "248",
-    change: "+8 novos",
-    positive: true,
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Taxa de Cancelamento",
-    value: "3.2%",
-    change: "-0.5% vs mes anterior",
-    positive: true,
-    icon: (
-      <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-  },
-];
+const fmt = (v: number) => `R$ ${v.toFixed(2).replace(".", ",")}`;
 
-/**
- * Proximos agendamentos (mock).
- */
-const proximosAgendamentos = [
-  {
-    id: "1",
-    cliente: "Juliana Silva",
-    servico: "Limpeza de Pele",
-    profissional: "Dra. Ana",
-    data: "2026-08-05",
-    horario: "14:00",
-    status: "CONFIRMADO",
-  },
-  {
-    id: "2",
-    cliente: "Carlos Mendes",
-    servico: "Massagem Relaxante",
-    profissional: "Joao",
-    data: "2026-08-05",
-    horario: "15:30",
-    status: "PENDENTE",
-  },
-  {
-    id: "3",
-    cliente: "Fernanda Alves",
-    servico: "Fisioterapia",
-    profissional: "Dr. Pedro",
-    data: "2026-08-05",
-    horario: "16:00",
-    status: "CONFIRMADO",
-  },
-  {
-    id: "4",
-    cliente: "Mariana Costa",
-    servico: "Ventosaterapia",
-    profissional: "Joao",
-    data: "2026-08-05",
-    horario: "17:00",
-    status: "PENDENTE",
-  },
-  {
-    id: "5",
-    cliente: "Lucas Ferreira",
-    servico: "Massagem Relaxante",
-    profissional: "Dra. Ana",
-    data: "2026-08-05",
-    horario: "18:30",
-    status: "CONFIRMADO",
-  },
-];
+interface DashboardStats {
+  agendamentosHoje: number;
+  receitaMes: number;
+  clientesAtivos: number;
+  taxaCancelamento: number;
+}
 
-/**
- * Cores dos status.
- */
+interface Agendamento {
+  id: string;
+  cliente: { usuario: { nome: string } };
+  servico: { nome: string };
+  profissional: { usuario: { nome: string } };
+  data: string;
+  horaInicio: string;
+  status: string;
+}
+
 const statusColors: Record<string, string> = {
   CONFIRMADO: "bg-sucesso/10 text-sucesso",
   PENDENTE: "bg-alerta/10 text-alerta",
@@ -116,125 +30,142 @@ const statusColors: Record<string, string> = {
   CONCLUIDO: "bg-info/10 text-info",
 };
 
-/**
- * Dashboard principal do admin.
- * Exibe KPIs, proximos agendamentos e resumo.
- */
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats>({
+    agendamentosHoje: 12,
+    receitaMes: 18500,
+    clientesAtivos: 248,
+    taxaCancelamento: 3.2,
+  });
+  const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/agendamentos?limit=5");
+        if (res.ok) {
+          const data = await res.json();
+          setAgendamentos(data.agendamentos || []);
+        }
+      } catch {}
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  const kpis = [
+    {
+      label: "Agendamentos Hoje",
+      value: String(stats.agendamentosHoje),
+      change: "+3 vs ontem",
+      positive: true,
+      icon: <CalendarDays className="h-6 w-6" />,
+    },
+    {
+      label: "Receita do Mes",
+      value: fmt(stats.receitaMes),
+      change: "+12% vs mes anterior",
+      positive: true,
+      icon: <Wallet className="h-6 w-6" />,
+    },
+    {
+      label: "Clientes Ativos",
+      value: String(stats.clientesAtivos),
+      change: "+8 novos",
+      positive: true,
+      icon: <Users className="h-6 w-6" />,
+    },
+    {
+      label: "Taxa de Cancelamento",
+      value: `${stats.taxaCancelamento}%`,
+      change: "-0.5% vs mes anterior",
+      positive: true,
+      icon: <Scissors className="h-6 w-6" />,
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Titulo */}
       <div>
-        <h1 className="font-titulo text-2xl font-bold text-marrom">
-          Dashboard
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Visao geral da clinica - Hoje, 05 de Agosto de 2026
-        </p>
+        <h1 className="font-display font-bold text-xl text-marrom">Dashboard</h1>
+        <p className="text-xs text-marrom/50">Visao geral da clinica</p>
       </div>
 
-      {/* KPIs */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map((kpi) => (
-          <div
-            key={kpi.label}
-            className="rounded-xl bg-white p-6 shadow-sm"
-          >
+          <div key={kpi.label} className="bg-white border border-border rounded-2xl p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">{kpi.label}</p>
-                <p className="mt-1 text-2xl font-bold text-marrom">
-                  {kpi.value}
-                </p>
+                <p className="text-xs text-marrom/50">{kpi.label}</p>
+                <p className="mt-1 text-2xl font-display font-bold text-marrom">{kpi.value}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-dourado/10 text-dourado">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-dourado/10 text-dourado">
                 {kpi.icon}
               </div>
             </div>
-            <p
-              className={`mt-2 text-xs ${
-                kpi.positive ? "text-sucesso" : "text-erro"
-              }`}
-            >
+            <p className={`mt-2 text-xs ${kpi.positive ? "text-sucesso" : "text-erro"}`}>
               {kpi.change}
             </p>
           </div>
         ))}
       </div>
 
-      {/* Tabela de agendamentos */}
-      <div className="rounded-xl bg-white shadow-sm">
+      <div className="bg-white border border-border rounded-2xl overflow-hidden">
         <div className="flex items-center justify-between border-b border-border p-4">
-          <h2 className="font-titulo text-lg font-semibold text-marrom">
-            Proximos Agendamentos
-          </h2>
-          <a
-            href="/dashboard/agendamentos"
-            className="text-sm font-medium text-dourado hover:text-dourado-500"
-          >
+          <h2 className="font-display font-semibold text-marrom">Proximos Agendamentos</h2>
+          <Link href="/dashboard/agendamentos" className="text-sm font-medium text-dourado hover:text-dourado-500">
             Ver todos
-          </a>
+          </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border bg-creme/50">
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Cliente
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Servico
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Profissional
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Horario
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Status
-                </th>
+              <tr className="border-b border-border bg-creme-200">
+                <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-marrom/50 font-medium">Cliente</th>
+                <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-marrom/50 font-medium">Servico</th>
+                <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-marrom/50 font-medium">Profissional</th>
+                <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-marrom/50 font-medium">Horario</th>
+                <th className="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-marrom/50 font-medium">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {proximosAgendamentos.map((agendamento) => (
-                <tr key={agendamento.id} className="hover:bg-creme/30">
-                  <td className="whitespace-nowrap px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-dourado/20">
-                        <span className="text-xs font-semibold text-dourado">
-                          {agendamento.cliente
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .slice(0, 2)}
-                        </span>
-                      </div>
-                      <span className="text-sm font-medium text-marrom">
-                        {agendamento.cliente}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-marrom/70">
-                    {agendamento.servico}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-marrom/70">
-                    {agendamento.profissional}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-marrom/70">
-                    {agendamento.horario}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                        statusColors[agendamento.status] || ""
-                      }`}
-                    >
-                      {agendamento.status}
-                    </span>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center">
+                    <Loader2 className="animate-spin mx-auto text-dourado" size={20} />
                   </td>
                 </tr>
-              ))}
+              ) : agendamentos.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center text-sm text-marrom/50">
+                    Nenhum agendamento encontrado.
+                  </td>
+                </tr>
+              ) : (
+                agendamentos.map((ag) => (
+                  <tr key={ag.id} className="hover:bg-creme-200/50 transition-colors">
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-dourado/20">
+                          <span className="text-xs font-semibold text-dourado">
+                            {ag.cliente.usuario.nome.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-marrom">{ag.cliente.usuario.nome}</span>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-marrom/70">{ag.servico.nome}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-marrom/70">{ag.profissional.usuario.nome}</td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-marrom/70">{ag.horaInicio}</td>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${statusColors[ag.status] || ""}`}>
+                        {ag.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
