@@ -1,0 +1,19 @@
+[Unit]
+Description=Beleza & Bem-Estar - Clinica PWA
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/clinica
+EnvironmentFile=/home/ubuntu/clinica/.env
+ExecStart=/usr/bin/node /home/ubuntu/clinica/node_modules/.bin/next start -p 3000
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=clinica-pwa
+NODE_OPTIONS=--max-old-space-size=512
+
+[Install]
+WantedBy=multi-user.target

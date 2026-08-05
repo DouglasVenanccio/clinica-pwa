@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Habilita compilacao standalone para Docker
-  output: "standalone",
-
   // Otimizacoes de imagem
   images: {
     remotePatterns: [
