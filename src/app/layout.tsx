@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
-/**
- * Layout raiz da aplicacao.
- * Configura metadados, viewport e fontes para toda a aplicacao.
- */
 export const metadata: Metadata = {
   title: "Beleza & Bem-Estar | Estetica e Fisioterapia",
   description:
@@ -31,16 +27,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F5F0E8",
+  themeColor: "#FDFBF7",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
 };
 
-/**
- * Layout principal da aplicacao.
- * Renderiza o HTML base e inclui estilos globais.
- */
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -1,73 +1,97 @@
 "use client";
 
-import { logoutAction } from "@/lib/actions/auth";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
 
-/**
- * Header do painel admin.
- * Mostra titulo da pagina e actions do usuario.
- */
-export function Header() {
+const navLinks = [
+  { label: "Inicio", href: "/#inicio" },
+  { label: "Sobre Nos", href: "/#sobre" },
+  { label: "Servicos", href: "/#servicos" },
+  { label: "Pacotes", href: "/#pacotes" },
+  { label: "Depoimentos", href: "/#depoimentos" },
+  { label: "Contato", href: "/#contato" },
+];
+
+export default function Header() {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-white px-6">
-      {/* Busca */}
-      <div className="flex items-center gap-4">
-        <div className="relative">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="h-9 w-64 rounded-lg border border-border bg-creme/50 pl-10 pr-4 text-sm focus:border-dourado focus:outline-none"
-          />
-        </div>
-      </div>
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-creme/95 backdrop-blur-md shadow-[0_1px_0_rgba(224,220,214,0.8)]"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+        <div className="flex items-center justify-between h-20">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-full bg-dourado flex items-center justify-center">
+              <span className="text-white font-display font-bold text-sm">B</span>
+            </div>
+            <span className="font-display font-semibold text-marrom tracking-tight">
+              Beleza <span className="text-dourado">&</span> Bem-Estar
+            </span>
+          </Link>
 
-      {/* Actions */}
-      <div className="flex items-center gap-4">
-        {/* Notificacoes */}
-        <button className="relative rounded-lg p-2 text-muted-foreground hover:bg-creme hover:text-marrom">
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-erro text-[10px] font-bold text-white">
-            3
-          </span>
-        </button>
+          <nav className="hidden lg:flex items-center gap-1">
+            {navLinks.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                className="px-4 py-2 text-sm text-marrom/80 hover:text-dourado rounded-full transition-colors"
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
 
-        {/* Usuario */}
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-dourado/20">
-            <span className="text-xs font-semibold text-dourado">AD</span>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/agendar"
+              className="hidden sm:inline-flex items-center px-5 py-2.5 bg-dourado hover:bg-dourado-500 text-white text-sm font-medium rounded-full transition-colors"
+            >
+              AGENDAR AGORA
+            </Link>
+            <button
+              className="lg:hidden p-2 text-marrom"
+              onClick={() => setOpen((o) => !o)}
+              aria-label="Menu"
+            >
+              {open ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
-          <div className="hidden sm:block">
-            <p className="text-sm font-medium text-marrom">Admin</p>
-            <p className="text-xs text-muted-foreground">Administrador</p>
-          </div>
         </div>
 
-        {/* Logout */}
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            className="rounded-lg p-2 text-muted-foreground hover:bg-creme hover:text-marrom"
-            title="Sair"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
-        </form>
+        {open && (
+          <div className="lg:hidden pb-6 flex flex-col gap-1 border-t border-border pt-4">
+            {navLinks.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="px-4 py-2.5 text-sm text-marrom/80 hover:bg-creme-200 rounded-lg"
+              >
+                {l.label}
+              </a>
+            ))}
+            <Link
+              href="/agendar"
+              onClick={() => setOpen(false)}
+              className="mt-2 inline-flex justify-center items-center px-5 py-2.5 bg-dourado text-white text-sm font-medium rounded-full"
+            >
+              AGENDAR AGORA
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
