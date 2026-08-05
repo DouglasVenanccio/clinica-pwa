@@ -13,7 +13,17 @@ import type { NextRequest } from "next/server";
  */
 
 // Rotas publicas que nao precisam de autenticacao
-const publicRoutes = ["/", "/login", "/cadastro", "/servicos", "/api/auth"];
+const publicRoutes = [
+  "/",
+  "/login",
+  "/cadastro",
+  "/servicos",
+  "/agendar",
+  "/api/auth",
+  "/api/servicos",
+  "/api/profissionais",
+  "/api/horarios-disponiveis",
+];
 
 // Rotas que redirecionam se ja estiver logado
 const authRoutes = ["/login", "/cadastro"];

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 /**
  * Pagina inicial da Landing Page.
  * Exibe as principais secoes: Hero, Servicos, Depoimentos e Footer.
@@ -15,7 +17,7 @@ export default function Home() {
             Estetica e Fisioterapia para realcar sua beleza e bem-estar.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <button className="btn-primary">Agendar Horario</button>
+            <Link href="/agendar" className="btn-primary">Agendar Horario</Link>
             <button className="btn-secondary">Nossos Servicos</button>
           </div>
         </div>
