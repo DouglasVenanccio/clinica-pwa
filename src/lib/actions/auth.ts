@@ -8,17 +8,18 @@ import { cadastroSchema } from "@/lib/validations";
 
 /**
  * Server Action: Login do usuario.
- * Valida credenciais e redireciona conforme o role.
+ * Valida credenciais e retorna sucesso/erro.
+ * O redirect e feito pelo componente client.
  */
 export async function loginAction(
-  _prevState: { error: string } | null,
+  _prevState: { error: string; success: boolean } | null,
   formData: FormData
-): Promise<{ error: string } | null> {
+): Promise<{ error: string; success: boolean }> {
   const email = formData.get("email") as string;
   const senha = formData.get("senha") as string;
 
   if (!email || !senha) {
-    return { error: "Email e senha sao obrigatorios." };
+    return { error: "Email e senha sao obrigatorios.", success: false };
   }
 
   try {
@@ -28,18 +29,20 @@ export async function loginAction(
       redirectTo: "/dashboard",
     });
   } catch (error) {
+    // signIn() com redirectTo lança NEXT_REDIRECT — isso é normal
+    // Next.js usa isso para fazer o redirect no client
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Email ou senha invalidos." };
+          return { error: "Email ou senha invalidos.", success: false };
         default:
-          return { error: "Erro ao fazer login. Tente novamente." };
+          return { error: "Erro ao fazer login. Tente novamente.", success: false };
       }
     }
     throw error;
   }
 
-  return null;
+  return { error: "", success: true };
 }
 
 /**

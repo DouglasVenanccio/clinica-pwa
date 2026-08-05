@@ -1,17 +1,27 @@
 "use client";
 
 import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { loginAction } from "@/lib/actions/auth";
 
 /**
  * Formulario de login com server action.
- * Usa useActionState para gerenciar estado do formulario.
+ * Usa useActionState para gerenciar estado e useRouter para redirect.
  */
 export function LoginForm() {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(
     loginAction,
-    null as { error: string } | null
+    { error: "", success: false }
   );
+
+  // Redireciona apos login bem-sucedido
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/dashboard");
+    }
+  }, [state, router]);
 
   return (
     <form action={formAction} className="mt-8 space-y-4">
