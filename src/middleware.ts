@@ -23,6 +23,10 @@ const publicRoutes = [
   "/api/servicos",
   "/api/profissionais",
   "/api/horarios-disponiveis",
+  "/api/appointments",
+  "/api/schedules",
+  "/api/reviews",
+  "/api/loyalty-cards",
 ];
 
 // Rotas que redirecionam se ja estiver logado

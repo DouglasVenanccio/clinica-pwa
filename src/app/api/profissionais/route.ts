@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
     let profissionais;
 
     if (servicoId) {
-      // Busca profissionais que oferecem este servico
       const profServicos = await prisma.profissionalServico.findMany({
         where: { servicoId },
         include: {
@@ -27,7 +26,6 @@ export async function GET(request: NextRequest) {
         .map((ps) => ps.profissional)
         .filter((p) => p.ativo);
     } else {
-      // Retorna todos os profissionais ativos
       const allProf = await prisma.profissional.findMany({
         where: { ativo: true },
         include: { usuario: true },
@@ -40,6 +38,44 @@ export async function GET(request: NextRequest) {
     console.error("Erro ao buscar profissionais:", error);
     return NextResponse.json(
       { error: "Erro ao buscar profissionais." },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/profissionais
+ * Cria um novo profissional com usuario.
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    const usuario = await prisma.usuario.create({
+      data: {
+        nome: body.nome,
+        email: body.email,
+        senha: body.senha,
+        telefone: body.telefone,
+        avatar: body.avatar,
+        role: "PROFISSIONAL",
+      },
+    });
+
+    const profissional = await prisma.profissional.create({
+      data: {
+        usuarioId: usuario.id,
+        especialidade: body.especialidade,
+        bio: body.bio,
+      },
+      include: { usuario: true },
+    });
+
+    return NextResponse.json({ profissional }, { status: 201 });
+  } catch (error) {
+    console.error("Erro ao criar profissional:", error);
+    return NextResponse.json(
+      { error: "Erro ao criar profissional." },
       { status: 500 }
     );
   }
