@@ -1,0 +1,296 @@
+// Schema do Prisma para o projeto Clinica de Estetica e Fisioterapia.
+// Define todas as tabelas, enums e relacionamentos do banco de dados.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+/** Papel do usuario no sistema */
+enum Role {
+  ADMIN
+  CLIENTE
+  PROFISSIONAL
+}
+
+/** Status de um agendamento */
+enum StatusAgendamento {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+  CONCLUIDO
+  NAO_COMPARECEU
+}
+
+/** Forma de pagamento */
+enum FormaPagamento {
+  PIX
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+}
+
+/** Status de um pagamento */
+enum StatusPagamento {
+  PENDENTE
+  PAGO
+  FALHOU
+  ESTORNADO
+}
+
+// ==================== MODELOS ====================
+
+/** Tabela de usuarios do sistema */
+model Usuario {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  senha         String
+  nome          String
+  telefone      String?
+  avatar        String?
+  role          Role      @default(CLIENTE)
+  ativo         Boolean   @default(true)
+  criadoEm      DateTime  @default(now()) @map("criado_em")
+  atualizadoEm  DateTime? @map("atualizado_em")
+
+  // Relacionamentos 1:1
+  cliente       Cliente?
+  profissional  Profissional?
+
+  @@map("usuarios")
+}
+
+/** Tabela de clientes */
+model Cliente {
+  id                String   @id @default(uuid())
+  usuarioId         String   @unique @map("usuario_id")
+  cpf               String?  @unique
+  dataNascimento    DateTime? @map("data_nascimento")
+  bloqueado         Boolean  @default(false)
+  motivoBloqueio    String?  @map("motivo_bloqueio")
+  pontosFidelidade  Int      @default(0) @map("pontos_fidelidade")
+  criadoEm          DateTime @default(now()) @map("criado_em")
+
+  // Relacionamentos
+  usuario           Usuario  @relation(fields: [usuarioId], references: [id])
+  agendamentos      Agendamento[]
+  avaliacoes        Avaliacao[]
+
+  @@map("clientes")
+}
+
+/** Tabela de profissionais */
+model Profissional {
+  id                String    @id @default(uuid())
+  usuarioId         String    @unique @map("usuario_id")
+  especialidade     String
+  bio               String?
+  avaliacaoMedia    Decimal   @default(0) @map("avaliacao_media") @db.Decimal(3, 2)
+  totalAvaliacoes   Int       @default(0) @map("total_avaliacoes")
+  ativo             Boolean   @default(true)
+  criadoEm          DateTime  @default(now()) @map("criado_em")
+
+  // Relacionamentos
+  usuario           Usuario   @relation(fields: [usuarioId], references: [id])
+  agendamentos      Agendamento[]
+  servicos          ProfissionalServico[]
+  horarios          HorarioDisponivel[]
+  bloqueios         BloqueioHorario[]
+  avaliacoes        Avaliacao[]
+
+  @@map("profissionais")
+}
+
+/** Tabela de categorias de servicos */
+model Categoria {
+  id          String   @id @default(uuid())
+  nome        String   @unique
+  descricao   String?
+  icone       String?
+  ativo       Boolean  @default(true)
+  ordem       Int      @default(0)
+  criadoEm    DateTime @default(now()) @map("criado_em")
+
+  // Relacionamentos
+  servicos    Servico[]
+
+  @@map("categorias")
+}
+
+/** Tabela de servicos */
+model Servico {
+  id              String   @id @default(uuid())
+  nome            String
+  descricao       String?
+  duracaoMinutos  Int      @map("duracao_minutos")
+  preco           Decimal  @db.Decimal(10, 2)
+  imagem          String?
+  categoriaId     String   @map("categoria_id")
+  ativo           Boolean  @default(true)
+  criadoEm        DateTime @default(now()) @map("criado_em")
+  atualizadoEm    DateTime? @map("atualizado_em")
+
+  // Relacionamentos
+  categoria       Categoria @relation(fields: [categoriaId], references: [id])
+  agendamentos    Agendamento[]
+  profissionais   ProfissionalServico[]
+  promocoes       Promocao[]
+
+  @@map("servicos")
+}
+
+/** Tabela intermediaria N:N entre profissionais e servicos */
+model ProfissionalServico {
+  id              String       @id @default(uuid())
+  profissionalId  String       @map("profissional_id")
+  servicoId       String       @map("servico_id")
+
+  // Relacionamentos
+  profissional    Profissional @relation(fields: [profissionalId], references: [id])
+  servico         Servico      @relation(fields: [servicoId], references: [id])
+
+  @@unique([profissionalId, servicoId])
+  @@map("profissionais_servicos")
+}
+
+/** Tabela de horarios disponiveis dos profissionais */
+model HorarioDisponivel {
+  id              String       @id @default(uuid())
+  profissionalId  String       @map("profissional_id")
+  diaSemana       Int          @map("dia_semana") // 0=Domingo, 6=Sabado
+  horaInicio      DateTime     @map("hora_inicio") @db.Time()
+  horaFim         DateTime     @map("hora_fim") @db.Time()
+  ativo           Boolean      @default(true)
+
+  // Relacionamentos
+  profissional    Profissional @relation(fields: [profissionalId], references: [id])
+
+  @@unique([profissionalId, diaSemana])
+  @@map("horarios_disponiveis")
+}
+
+/** Tabela de bloqueios de horarios */
+model BloqueioHorario {
+  id              String       @id @default(uuid())
+  profissionalId  String       @map("profissional_id")
+  dataInicio      DateTime     @map("data_inicio") @db.Date()
+  dataFim         DateTime?    @map("data_fim") @db.Date()
+  horaInicio      DateTime?    @map("hora_inicio") @db.Time()
+  horaFim         DateTime?    @map("hora_fim") @db.Time()
+  motivo          String?
+  criadoEm        DateTime     @default(now()) @map("criado_em")
+
+  // Relacionamentos
+  profissional    Profissional @relation(fields: [profissionalId], references: [id])
+
+  @@map("bloqueios_horarios")
+}
+
+/** Tabela de agendamentos */
+model Agendamento {
+  id                String              @id @default(uuid())
+  clienteId         String              @map("cliente_id")
+  profissionalId    String              @map("profissional_id")
+  servicoId         String              @map("servico_id")
+  data              DateTime            @db.Date()
+  horaInicio        DateTime            @map("hora_inicio") @db.Time()
+  horaFim           DateTime            @map("hora_fim") @db.Time()
+  status            StatusAgendamento   @default(PENDENTE)
+  formaPagamento    FormaPagamento?     @map("forma_pagamento")
+  valorTotal        Decimal             @map("valor_total") @db.Decimal(10, 2)
+  descontoPix       Decimal             @default(0) @map("desconto_pix") @db.Decimal(10, 2)
+  observacoes       String?
+  lembreteEnviado   Boolean             @default(false) @map("lembrete_enviado")
+  criadoEm          DateTime            @default(now()) @map("criado_em")
+  atualizadoEm      DateTime?           @map("atualizado_em")
+
+  // Relacionamentos
+  cliente           Cliente             @relation(fields: [clienteId], references: [id])
+  profissional      Profissional        @relation(fields: [profissionalId], references: [id])
+  servico           Servico             @relation(fields: [servicoId], references: [id])
+  pagamento         Pagamento?
+  avaliacao         Avaliacao?
+
+  // Indices para performance
+  @@index([clienteId])
+  @@index([profissionalId])
+  @@index([data])
+  @@index([status])
+  @@index([profissionalId, data])
+  @@map("agendamentos")
+}
+
+/** Tabela de pagamentos */
+model Pagamento {
+  id                String          @id @default(uuid())
+  agendamentoId     String          @unique @map("agendamento_id")
+  valor             Decimal         @db.Decimal(10, 2)
+  formaPagamento    FormaPagamento  @map("forma_pagamento")
+  status            StatusPagamento @default(PENDENTE)
+  transacaoId       String?         @map("transacao_id")
+  parcelas          Int             @default(1)
+  dataPagamento     DateTime?       @map("data_pagamento")
+  dataCriacao       DateTime        @default(now()) @map("data_criacao")
+
+  // Relacionamentos
+  agendamento       Agendamento     @relation(fields: [agendamentoId], references: [id])
+
+  @@map("pagamentos")
+}
+
+/** Tabela de promocoes e cupons */
+model Promocao {
+  id                  String    @id @default(uuid())
+  titulo              String
+  descricao           String?
+  descontoPercentual  Decimal?  @map("desconto_percentual") @db.Decimal(5, 2)
+  descontoValor       Decimal?  @map("desconto_valor") @db.Decimal(10, 2)
+  codigoCupom         String?   @unique @map("codigo_cupom")
+  dataInicio          DateTime  @map("data_inicio") @db.Date()
+  dataFim             DateTime  @map("data_fim") @db.Date()
+  ativo               Boolean   @default(true)
+  usoMaximo           Int?      @map("uso_maximo")
+  usoAtual            Int       @default(0) @map("uso_atual")
+  servicoId           String?   @map("servico_id")
+  criadoEm            DateTime  @default(now()) @map("criado_em")
+
+  // Relacionamentos
+  servico             Servico?  @relation(fields: [servicoId], references: [id])
+
+  @@map("promocoes")
+}
+
+/** Tabela de avaliacoes de clientes */
+model Avaliacao {
+  id                String      @id @default(uuid())
+  agendamentoId     String      @unique @map("agendamento_id")
+  clienteId         String      @map("cliente_id")
+  profissionalId    String      @map("profissional_id")
+  nota              Int
+  comentario        String?
+  moderado          Boolean     @default(false)
+  criadoEm          DateTime    @default(now()) @map("criado_em")
+
+  // Relacionamentos
+  agendamento       Agendamento @relation(fields: [agendamentoId], references: [id])
+  cliente           Cliente     @relation(fields: [clienteId], references: [id])
+  profissional      Profissional @relation(fields: [profissionalId], references: [id])
+
+  @@map("avaliacoes")
+}
+
+/** Tabela de configuracoes do sistema */
+model Configuracao {
+  id            String   @id @default(uuid())
+  chave         String   @unique
+  valor         String
+  descricao     String?
+  atualizadoEm  DateTime? @map("atualizado_em")
+
+  @@map("configuracoes")
+}

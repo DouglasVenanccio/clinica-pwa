@@ -1,0 +1,72 @@
+version: '3.8'
+
+# Docker Compose para o projeto Clinica de Estetica e Fisioterapia
+# Inclui: App Next.js, PostgreSQL, Nginx
+
+services:
+  # Servico principal - Aplicacao Next.js
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: clinica-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://clinica:clinica123@db:5432/clinica_pwa
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-seu-secret-aqui-mude-em-producao}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./public:/app/public
+    networks:
+      - clinica-network
+
+  # Banco de dados - PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: clinica-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=clinica_pwa
+      - POSTGRES_USER=clinica
+      - POSTGRES_PASSWORD=clinica123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinica -d clinica_pwa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clinica-network
+
+  # Reverse Proxy - Nginx
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: clinica-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    networks:
+      - clinica-network
+
+# Volumes persistentes
+volumes:
+  postgres_data:
+    driver: local
+
+# Rede compartilhada
+networks:
+  clinica-network:
+    driver: bridge

@@ -1,0 +1,67 @@
+{
+  "name": "Beleza & Bem-Estar | Estetica e Fisioterapia",
+  "short_name": "Beleza & Bem-Estar",
+  "description": "Clinica de Estetica e Fisioterapia - Agendamento online simplificado",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F0E8",
+  "theme_color": "#C9A96E",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["health", "beauty", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshots/screenshot-mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agendar Horario",
+      "short_name": "Agendar",
+      "description": "Agende seu horamento",
+      "url": "/agendar",
+      "icons": [
+        {
+          "src": "/icons/shortcut-agendar.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Meus Agendamentos",
+      "short_name": "Agendamentos",
+      "description": "Veja seus agendamentos",
+      "url": "/meus-agendamentos",
+      "icons": [
+        {
+          "src": "/icons/shortcut-agendamentos.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
