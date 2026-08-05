@@ -23,14 +23,13 @@ export async function loginAction(
   }
 
   try {
+    // signIn SEM redirectTo para evitar NEXT_REDIRECT que quebra useActionState
     await signIn("credentials", {
       email,
       senha,
-      redirectTo: "/dashboard",
     });
+    return { error: "", success: true };
   } catch (error) {
-    // signIn() com redirectTo lança NEXT_REDIRECT — isso é normal
-    // Next.js usa isso para fazer o redirect no client
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
@@ -39,10 +38,10 @@ export async function loginAction(
           return { error: "Erro ao fazer login. Tente novamente.", success: false };
       }
     }
-    throw error;
+    // Qualquer outro erro (incluindo redirect inesperado)
+    console.error("Erro no login:", error);
+    return { error: "Erro inesperado. Tente novamente.", success: false };
   }
-
-  return { error: "", success: true };
 }
 
 /**
@@ -100,15 +99,17 @@ export async function registerAction(
       });
     });
 
-    // Login automatico apos cadastro
+    // Login automatico apos cadastro (sem redirectTo)
     await signIn("credentials", {
       email: data.email,
       senha: data.senha,
-      redirectTo: "/dashboard",
     });
 
     return { error: "", success: true };
   } catch (error) {
+    if (error instanceof AuthError) {
+      return { error: "Erro ao fazer login apos cadastro.", success: false };
+    }
     console.error("Erro no cadastro:", error);
     return { error: "Erro ao criar conta. Tente novamente.", success: false };
   }
