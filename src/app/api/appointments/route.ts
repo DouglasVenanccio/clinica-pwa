@@ -168,10 +168,13 @@ export async function POST(request: NextRequest) {
     const duracaoMin = body.durationMin || servico.duracaoMinutos;
     const horaFim = new Date(horaInicio.getTime() + duracaoMin * 60000);
 
-    const prismaStatus = statusMap[body.status] || "PENDENTE";
-    const prismaPayment = paymentMap[paymentMethod] || "PIX";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const prismaStatus: any = statusMap[body.status] || "PENDENTE";
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const prismaPayment: any = paymentMap[paymentMethod] || "PIX";
 
-    const agendamento = await prisma.agendamento.create({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const agendamento: any = await prisma.agendamento.create({
       data: {
         clienteId: cliente.id,
         profissionalId: profissional.id,
@@ -192,14 +195,14 @@ export async function POST(request: NextRequest) {
 
     const mapped = {
       id: agendamento.id,
-      clienteNome: agendamento.cliente.usuario.nome,
-      clienteEmail: agendamento.cliente.usuario.email,
-      servicoNome: agendamento.servico.nome,
-      profissionalNome: agendamento.profissional.usuario.nome,
+      clienteNome: agendamento.cliente?.usuario?.nome || clientName,
+      clienteEmail: agendamento.cliente?.usuario?.email || clientEmail,
+      servicoNome: agendamento.servico?.nome || serviceName,
+      profissionalNome: agendamento.profissional?.usuario?.nome || professionalName,
       data: formatDate(agendamento.data),
       horaInicio: formatTime(agendamento.horaInicio),
-      status: statusReverseMap[agendamento.status] || agendamento.status.toLowerCase(),
-      formaPagamento: paymentReverseMap[agendamento.formaPagamento] || agendamento.formaPagamento.toLowerCase(),
+      status: statusReverseMap[agendamento.status] || agendamento.status?.toLowerCase() || "pending",
+      formaPagamento: paymentReverseMap[agendamento.formaPagamento] || agendamento.formaPagamento?.toLowerCase() || "pix",
       valorTotal: Number(agendamento.valorTotal),
     };
 
