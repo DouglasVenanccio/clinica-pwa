@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 
@@ -15,9 +14,6 @@ export const {
   signOut,
   auth,
 } = NextAuth({
-  // Adapter para persistencia no Prisma
-  adapter: PrismaAdapter(prisma),
-
   // Confiar no host do proxy (Tailscale Funnel, Nginx, etc.)
   trustHost: true,
 
