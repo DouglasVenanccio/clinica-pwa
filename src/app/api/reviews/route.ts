@@ -7,13 +7,14 @@ export async function GET(request: NextRequest) {
     const sort = searchParams.get("sort") || "desc";
     const limit = parseInt(searchParams.get("limit") || "50", 10);
 
+    const validSort = sort === "asc" || sort === "desc" ? sort : "desc";
     const avaliacoes = await prisma.avaliacao.findMany({
       include: {
         cliente: { include: { usuario: true } },
         profissional: { include: { usuario: true } },
         agendamento: { include: { servico: true } },
       },
-      orderBy: { criadoEm: sort as "asc" | "desc" },
+      orderBy: { criadoEm: validSort },
       take: limit,
     });
 

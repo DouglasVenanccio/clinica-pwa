@@ -39,9 +39,7 @@ export const {
        * Valida credenciais contra o banco de dados.
        */
       async authorize(credentials) {
-        console.log("[AUTH] authorize called, email:", credentials?.email, "hasPassword:", !!credentials?.password);
         if (!credentials?.email || !credentials?.password) {
-          console.log("[AUTH] authorize: missing email or password");
           return null;
         }
 
@@ -58,20 +56,14 @@ export const {
 
         // Verifica se o usuario existe e esta ativo
         if (!usuario || !usuario.ativo) {
-          console.log("[AUTH] authorize: user not found or inactive:", !!usuario, usuario?.ativo);
           return null;
         }
-
-        console.log("[AUTH] authorize: user found:", usuario.email, "role:", usuario.role, "senhaLength:", usuario.senha?.length);
-        console.log("[AUTH] authorize: password type:", typeof credentials.password, "length:", (credentials.password as string)?.length, "value:", JSON.stringify(credentials.password));
 
         // Verifica a senha
         const senhaValida = await bcrypt.compare(
           credentials.password as string,
           usuario.senha
         );
-
-        console.log("[AUTH] authorize: password valid:", senhaValida);
 
         if (!senhaValida) {
           return null;

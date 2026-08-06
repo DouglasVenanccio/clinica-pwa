@@ -66,6 +66,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    const validSort = sort === "asc" || sort === "desc" ? sort : "desc";
     const agendamentos = await prisma.agendamento.findMany({
       where,
       include: {
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
         profissional: { include: { usuario: true } },
         servico: true,
       },
-      orderBy: { criadoEm: sort as "asc" | "desc" },
+      orderBy: { criadoEm: validSort },
       take: limit,
     });
 
