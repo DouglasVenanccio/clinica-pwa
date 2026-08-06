@@ -2,84 +2,52 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 /**
- * Middleware de protecao de rotas.
- * Verifica autenticacao e redireciona conforme necessario.
+ * Middleware de protecao de rotas API.
+ * Verifica autenticacao via session cookie.
  *
- * Rotas protegidas:
- * - /dashboard/* (requer autenticacao)
- * - /admin/* (requer role ADMIN)
- * - /cliente/* (requer role CLIENTE)
- * - /api/* (requer autenticacao, exceto /api/auth)
+ * Rotas publicas: /api/auth/*, /api/servicos, /api/profissionais, etc.
+ * Rotas protegidas: todas as outras /api/*
  */
 
-// Rotas publicas que nao precisam de autenticacao
-const publicRoutes = [
-  "/",
-  "/login",
-  "/cadastro",
-  "/servicos",
-  "/agendar",
+const publicApiRoutes = [
   "/api/auth",
   "/api/servicos",
   "/api/profissionais",
   "/api/horarios-disponiveis",
-  "/api/appointments",
-  "/api/schedules",
-  "/api/reviews",
-  "/api/loyalty-cards",
 ];
-
-// Rotas que redirecionam se ja estiver logado
-const authRoutes = ["/login", "/cadastro"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Verificar se a rota e publica
-  const isPublicRoute = publicRoutes.some(
+  // So aplica middleware em rotas /api/
+  if (!pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
+  // Verificar se a rota API e publica
+  const isPublicApi = publicApiRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + "/")
   );
 
-  // Verificar se e rota de auth (redirecionar se logado)
-  const isAuthRoute = authRoutes.some((route) => pathname === route);
-
-  // Para rotas publicas, permitir acesso direto
-  if (isPublicRoute && !isAuthRoute) {
+  if (isPublicApi) {
     return NextResponse.next();
   }
 
-  // Para rotas de auth, verificar se tem session cookie
-  if (isAuthRoute) {
-    const hasSession = request.cookies.get("authjs.session-token") ||
-      request.cookies.get("__Secure-authjs.session-token");
-    if (hasSession) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-    return NextResponse.next();
-  }
-
-  // Para rotas protegidas, verificar session cookie
-  const hasSession = request.cookies.get("authjs.session-token") ||
+  // Para rotas API protegidas, verificar session cookie
+  const hasSession =
+    request.cookies.get("authjs.session-token") ||
     request.cookies.get("__Secure-authjs.session-token");
 
   if (!hasSession) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.json(
+      { error: "Autenticacao obrigatoria" },
+      { status: 401 }
+    );
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico (favicon)
-     * - public files
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
-  ],
+  matcher: ["/api/:path*"],
 };

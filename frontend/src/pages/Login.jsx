@@ -20,8 +20,14 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await auth.loginViaEmailPassword(email, password);
-      window.location.href = returnTo;
+      const user = await auth.loginViaEmailPassword(email, password);
+      if (user?.role === "ADMIN") {
+        window.location.href = "/dashboard";
+      } else if (user?.role === "PROFISSIONAL") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = returnTo;
+      }
     } catch (err) {
       setError(err.message || "Email ou senha invalidos");
     } finally {
@@ -30,7 +36,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    auth.loginViaGoogle(returnTo);
+    auth.loginViaGoogle("/dashboard");
   };
 
   return (

@@ -39,12 +39,12 @@ function App() {
             <Route path="/cadastro" element={<Register />} />
             <Route path="/esqueci-senha" element={<ForgotPassword />} />
             <Route path="/redefinir-senha" element={<ResetPassword />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/agendamentos" element={<Appointments />} />
-            <Route path="/admin/servicos" element={<ServicesAdmin />} />
-            <Route path="/admin/profissionais" element={<ProfessionalsAdmin />} />
-            <Route path="/admin/analise" element={<AnalyticsAdmin />} />
-            <Route path="/admin/disponibilidade" element={<AvailabilityAdmin />} />
+            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Admin /></ProtectedRoute>} />
+            <Route path="/dashboard/agendamentos" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Appointments /></ProtectedRoute>} />
+            <Route path="/dashboard/servicos" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ServicesAdmin /></ProtectedRoute>} />
+            <Route path="/dashboard/profissionais" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ProfessionalsAdmin /></ProtectedRoute>} />
+            <Route path="/dashboard/analise" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AnalyticsAdmin /></ProtectedRoute>} />
+            <Route path="/dashboard/disponibilidade" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><AvailabilityAdmin /></ProtectedRoute>} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Router>

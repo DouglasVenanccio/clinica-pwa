@@ -30,7 +30,16 @@ export const auth = {
     }
     const data = await res.json().catch(() => ({ ok: true }));
     if (data?.error) throw new Error(data.error);
-    return data;
+
+    // Aguardar cookie de sessao ser processado
+    await new Promise(r => setTimeout(r, 300));
+
+    try {
+      const sessionUser = await me();
+      return sessionUser;
+    } catch {
+      return null;
+    }
   },
 
   async register({ email, password, nome, telefone }) {

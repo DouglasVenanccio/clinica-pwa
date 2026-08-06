@@ -1,38 +1,52 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
 import {
   LayoutDashboard, CalendarDays, Users, Scissors, Wallet, Settings,
-  LifeBuoy, CalendarClock, BarChart3
+  LifeBuoy, CalendarClock, BarChart3, LogOut
 } from 'lucide-react';
 
-const groups = [
+const adminGroups = [
   {
     label: 'Agendamentos',
-    items: [{ icon: LayoutDashboard, label: 'Dashboard', href: '/admin' }, { icon: CalendarDays, label: 'Agendamentos', href: '/admin/agendamentos' }],
+    items: [{ icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' }, { icon: CalendarDays, label: 'Agendamentos', href: '/dashboard/agendamentos' }],
   },
   {
     label: 'Equipe',
     items: [
-      { icon: Scissors, label: 'Serviços', href: '/admin/servicos' },
-      { icon: Users, label: 'Profissionais', href: '/admin/profissionais' },
-      { icon: CalendarClock, label: 'Disponibilidade', href: '/admin/disponibilidade' },
+      { icon: Scissors, label: 'Serviços', href: '/dashboard/servicos' },
+      { icon: Users, label: 'Profissionais', href: '/dashboard/profissionais' },
+      { icon: CalendarClock, label: 'Disponibilidade', href: '/dashboard/disponibilidade' },
     ],
   },
   {
     label: 'Análises',
-    items: [{ icon: BarChart3, label: 'Métricas', href: '/admin/analise' }],
+    items: [{ icon: BarChart3, label: 'Métricas', href: '/dashboard/analise' }],
   },
   {
     label: 'Financeiro',
-    items: [{ icon: Wallet, label: 'Financeiro', href: '/admin' }],
+    items: [{ icon: Wallet, label: 'Financeiro', href: '/dashboard' }],
   },
   {
     label: 'Configurações',
-    items: [{ icon: Settings, label: 'Configurações', href: '/admin' }],
+    items: [{ icon: Settings, label: 'Configurações', href: '/dashboard' }],
+  },
+];
+
+const profissionalGroups = [
+  {
+    label: 'Meu Painel',
+    items: [
+      { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
+      { icon: CalendarDays, label: 'Meus Agendamentos', href: '/dashboard/agendamentos' },
+      { icon: CalendarClock, label: 'Meus Horários', href: '/dashboard/disponibilidade' },
+    ],
   },
 ];
 
 export default function AdminSidebar() {
   const { pathname } = useLocation();
+  const { user, logout } = useAuth();
+  const groups = user?.role === 'ADMIN' ? adminGroups : profissionalGroups;
   return (
     <aside className="w-[260px] shrink-0 bg-[#2b2622] text-[#FDFBF7] flex flex-col h-screen sticky top-0">
       <div className="px-6 py-6 border-b border-white/10">
@@ -73,7 +87,7 @@ export default function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="p-3">
+      <div className="p-3 space-y-3">
         <div className="bg-white/5 rounded-xl p-4">
           <div className="flex items-center gap-2 text-[#FDFBF7]/80 mb-1">
             <LifeBuoy size={15} className="text-[#B67D35]" />
@@ -84,6 +98,13 @@ export default function AdminSidebar() {
             Suporte
           </button>
         </div>
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-[#FDFBF7]/70 hover:bg-white/5 hover:text-[#FDFBF7] transition-colors"
+        >
+          <LogOut size={16} />
+          Sair
+        </button>
       </div>
     </aside>
   );

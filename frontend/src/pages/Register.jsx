@@ -28,7 +28,12 @@ export default function Register() {
     setLoading(true);
     try {
       await auth.register({ email, password, nome, telefone });
-      window.location.href = returnTo;
+      const user = await auth.loginViaEmailPassword(email, password);
+      if (user?.role === "ADMIN" || user?.role === "PROFISSIONAL") {
+        window.location.href = "/dashboard";
+      } else {
+        window.location.href = returnTo !== "/" ? returnTo : "/agendamento";
+      }
     } catch (err) {
       setError(err.message || "Falha no registro");
     } finally {
@@ -37,7 +42,7 @@ export default function Register() {
   };
 
   const handleGoogleLogin = () => {
-    auth.loginViaGoogle(returnTo);
+    auth.loginViaGoogle("/agendamento");
   };
 
   return (

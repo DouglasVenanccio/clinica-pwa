@@ -30,6 +30,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const hasRole = (...roles) => {
+    return user && roles.includes(user.role);
+  };
+
   const logout = async () => {
     try {
       await auth.logout();
@@ -52,6 +56,7 @@ export const AuthProvider = ({ children }) => {
       isLoadingAuth,
       authError,
       authChecked,
+      hasRole,
       logout,
       navigateToLogin,
       checkUserAuth,
