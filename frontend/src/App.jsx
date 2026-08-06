@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider } from '@/lib/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from '@/components/site/Layout';
 import Home from '@/pages/Home';
@@ -30,9 +31,9 @@ function App() {
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/agendamento" element={<Agendamento />} />
-              <Route path="/avaliacao" element={<Avaliacao />} />
-              <Route path="/fidelidade" element={<Fidelidade />} />
+              <Route path="/agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
+              <Route path="/avaliacao" element={<ProtectedRoute><Avaliacao /></ProtectedRoute>} />
+              <Route path="/fidelidade" element={<ProtectedRoute><Fidelidade /></ProtectedRoute>} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Register />} />

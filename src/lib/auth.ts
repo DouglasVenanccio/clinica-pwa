@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
@@ -19,6 +20,12 @@ export const {
 
   // Providers de autenticacao
   providers: [
+    // Autenticacao por Google OAuth
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+    }),
+
     // Autenticacao por credenciais (email + senha)
     Credentials({
       name: "credentials",
@@ -90,12 +97,47 @@ export const {
   callbacks: {
     /**
      * Callback JWT - Adiciona dados extras ao token.
+     * Para login Google, cria Cliente se nao existir.
      */
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
       }
+
+      // Para login Google, garantir que existe usuario + cliente no banco
+      if (account?.provider === "google" && token.email) {
+        let usuario = await prisma.usuario.findUnique({
+          where: { email: token.email },
+        });
+
+        if (!usuario) {
+          // Criar usuario a partir dos dados do Google
+          usuario = await prisma.usuario.create({
+            data: {
+              email: token.email,
+              nome: token.name ?? "Usuario Google",
+              avatar: token.picture ?? null,
+              role: "CLIENTE",
+            },
+          });
+        }
+
+        // Garantir que existe cliente associado
+        const clienteExistente = await prisma.cliente.findUnique({
+          where: { usuarioId: usuario.id },
+        });
+
+        if (!clienteExistente) {
+          await prisma.cliente.create({
+            data: { usuarioId: usuario.id },
+          });
+        }
+
+        token.id = usuario.id;
+        token.role = usuario.role;
+      }
+
       return token;
     },
 

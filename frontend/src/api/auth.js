@@ -67,6 +67,13 @@ export const auth = {
     return true;
   },
 
+  async loginViaGoogle(returnTo) {
+    const callbackUrl = returnTo
+      ? `${window.location.origin}${returnTo}`
+      : `${window.location.origin}/`;
+    window.location.href = `/api/auth/signin/google?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  },
+
   async logout() {
     const csrfToken = await getCsrfToken();
     await fetch(`/api/auth/signout?csrfToken=${encodeURIComponent(csrfToken)}`, {

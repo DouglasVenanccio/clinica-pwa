@@ -1,37 +1,28 @@
-import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { Loader2 } from 'lucide-react';
 
-const DefaultFallback = () => (
-  <div className="fixed inset-0 flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-  </div>
-);
-
-export default function ProtectedRoute({ fallback = <DefaultFallback />, unauthenticatedElement }) {
-  const { isAuthenticated, isLoadingAuth, authChecked, authError, checkUserAuth } = useAuth();
-
-  useEffect(() => {
-    if (!authChecked && !isLoadingAuth) {
-      checkUserAuth();
-    }
-  }, [authChecked, isLoadingAuth, checkUserAuth]);
+/**
+ * Componente de rota protegida.
+ * Redireciona para /login se o usuario nao estiver autenticado.
+ * Apos login, redireciona de volta para a rota original.
+ */
+export default function ProtectedRoute({ children }) {
+  const { isAuthenticated, isLoadingAuth, authChecked } = useAuth();
+  const location = useLocation();
 
   if (isLoadingAuth || !authChecked) {
-    return fallback;
-  }
-
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    }
-    return unauthenticatedElement;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
-    return unauthenticatedElement;
+    const returnTo = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/login?returnTo=${returnTo}`} replace />;
   }
 
-  return <Outlet />;
+  return children;
 }
