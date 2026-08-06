@@ -63,6 +63,7 @@ export const {
         }
 
         console.log("[AUTH] authorize: user found:", usuario.email, "role:", usuario.role, "senhaLength:", usuario.senha?.length);
+        console.log("[AUTH] authorize: password type:", typeof credentials.password, "length:", (credentials.password as string)?.length, "value:", JSON.stringify(credentials.password));
 
         // Verifica a senha
         const senhaValida = await bcrypt.compare(
