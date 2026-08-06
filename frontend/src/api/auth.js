@@ -80,7 +80,20 @@ export const auth = {
     const callbackUrl = returnTo
       ? `${window.location.origin}${returnTo}`
       : `${window.location.origin}/`;
-    window.location.href = `/api/auth/signin/google?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+    const csrfToken = await getCsrfToken();
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/api/auth/signin/google';
+    const fields = { csrfToken, callbackUrl, json: 'true' };
+    for (const [k, v] of Object.entries(fields)) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = k;
+      input.value = v;
+      form.appendChild(input);
+    }
+    document.body.appendChild(form);
+    form.submit();
   },
 
   async logout() {
