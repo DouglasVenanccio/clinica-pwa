@@ -50,7 +50,8 @@ export function middleware(request: NextRequest) {
 
   // Para rotas de auth, verificar se tem session cookie
   if (isAuthRoute) {
-    const hasSession = request.cookies.get("authjs.session-token");
+    const hasSession = request.cookies.get("authjs.session-token") ||
+      request.cookies.get("__Secure-authjs.session-token");
     if (hasSession) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
@@ -58,7 +59,8 @@ export function middleware(request: NextRequest) {
   }
 
   // Para rotas protegidas, verificar session cookie
-  const hasSession = request.cookies.get("authjs.session-token");
+  const hasSession = request.cookies.get("authjs.session-token") ||
+    request.cookies.get("__Secure-authjs.session-token");
 
   if (!hasSession) {
     const loginUrl = new URL("/login", request.url);
