@@ -32,9 +32,11 @@ function mapProfessional(p) {
     id: p.id,
     name,
     initials,
-    specialty: p.especialidades || '',
+    specialty: p.especialidade || p.especialidades || '',
     rating: Number(p.rating || 4.8),
     reviews: Number(p.reviews || 12),
+    email: u.email || '',
+    telefone: u.telefone || '',
     ativo: p.ativo,
   };
 }
@@ -151,9 +153,11 @@ const Professional = {
       method: 'POST',
       body: JSON.stringify({
         nome: d.name,
-        especialidades: d.specialty,
-        rating: d.rating,
-        reviews: d.reviews,
+        email: d.email,
+        senha: d.password,
+        telefone: d.phone,
+        especialidade: d.specialty,
+        bio: d.bio || '',
       }),
     });
     return mapProfessional(data.profissional || data);
@@ -163,9 +167,10 @@ const Professional = {
       method: 'PUT',
       body: JSON.stringify({
         nome: d.name,
-        especialidades: d.specialty,
-        rating: d.rating,
-        reviews: d.reviews,
+        email: d.email,
+        telefone: d.phone,
+        especialidade: d.specialty,
+        bio: d.bio || '',
       }),
     });
     return mapProfessional(data.profissional || data);
@@ -338,4 +343,15 @@ const LoyaltyCard = {
   },
 };
 
-export const api = { Service, Professional, Appointment, Schedule, Review, LoyaltyCard };
+const Client = {
+  async list({ search, page, limit } = {}) {
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    if (page) params.set('page', String(page));
+    if (limit) params.set('limit', String(limit));
+    const qs = params.toString();
+    return request(`/clientes${qs ? '?' + qs : ''}`);
+  },
+};
+
+export const api = { Service, Professional, Appointment, Schedule, Review, LoyaltyCard, Client };

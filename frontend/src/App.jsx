@@ -15,8 +15,11 @@ import ServicesAdmin from '@/pages/admin/Services';
 import ProfessionalsAdmin from '@/pages/admin/Professionals';
 import AnalyticsAdmin from '@/pages/admin/Analytics';
 import AvailabilityAdmin from '@/pages/admin/Availability';
+import FinanceiroAdmin from '@/pages/admin/Financeiro';
+import ConfiguracoesAdmin from '@/pages/admin/Configuracoes';
 import Avaliacao from '@/pages/Avaliacao';
 import Fidelidade from '@/pages/Fidelidade';
+import MeusAgendamentos from '@/pages/MeusAgendamentos';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -34,6 +37,7 @@ function App() {
               <Route path="/agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
               <Route path="/avaliacao" element={<ProtectedRoute><Avaliacao /></ProtectedRoute>} />
               <Route path="/fidelidade" element={<ProtectedRoute><Fidelidade /></ProtectedRoute>} />
+              <Route path="/meus-agendamentos" element={<ProtectedRoute><MeusAgendamentos /></ProtectedRoute>} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Register />} />
@@ -45,6 +49,8 @@ function App() {
             <Route path="/dashboard/profissionais" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ProfessionalsAdmin /></ProtectedRoute>} />
             <Route path="/dashboard/analise" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AnalyticsAdmin /></ProtectedRoute>} />
             <Route path="/dashboard/disponibilidade" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><AvailabilityAdmin /></ProtectedRoute>} />
+            <Route path="/dashboard/financeiro" element={<ProtectedRoute allowedRoles={["ADMIN"]}><FinanceiroAdmin /></ProtectedRoute>} />
+            <Route path="/dashboard/configuracoes" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ConfiguracoesAdmin /></ProtectedRoute>} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Router>

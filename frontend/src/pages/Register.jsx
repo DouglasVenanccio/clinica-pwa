@@ -29,10 +29,12 @@ export default function Register() {
     try {
       await auth.register({ email, password, nome, telefone });
       const user = await auth.loginViaEmailPassword(email, password);
-      if (user?.role === "ADMIN" || user?.role === "PROFISSIONAL") {
+      if (user?.role === "ADMIN") {
         window.location.href = "/dashboard";
+      } else if (user?.role === "PROFISSIONAL") {
+        window.location.href = "/dashboard/agendamentos";
       } else {
-        window.location.href = returnTo !== "/" ? returnTo : "/agendamento";
+        window.location.href = "/agendamento";
       }
     } catch (err) {
       setError(err.message || "Falha no registro");

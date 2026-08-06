@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 function getNivel(pontos: number): string {
-  if (pontos >= 1000) return "OURO";
-  if (pontos >= 500) return "PRATA";
-  if (pontos >= 100) return "BRONZE";
-  return "BASICO";
+  if (pontos >= 5000) return "diamante";
+  if (pontos >= 2000) return "ouro";
+  if (pontos >= 500) return "prata";
+  return "bronze";
 }
 
 export async function PUT(

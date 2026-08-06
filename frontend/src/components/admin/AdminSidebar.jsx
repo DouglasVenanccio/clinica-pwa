@@ -24,11 +24,11 @@ const adminGroups = [
   },
   {
     label: 'Financeiro',
-    items: [{ icon: Wallet, label: 'Financeiro', href: '/dashboard' }],
+    items: [{ icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro' }],
   },
   {
     label: 'Configurações',
-    items: [{ icon: Settings, label: 'Configurações', href: '/dashboard' }],
+    items: [{ icon: Settings, label: 'Configurações', href: '/dashboard/configuracoes' }],
   },
 ];
 

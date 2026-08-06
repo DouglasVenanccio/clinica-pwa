@@ -24,9 +24,9 @@ export default function Login() {
       if (user?.role === "ADMIN") {
         window.location.href = "/dashboard";
       } else if (user?.role === "PROFISSIONAL") {
-        window.location.href = "/dashboard";
+        window.location.href = "/dashboard/agendamentos";
       } else {
-        window.location.href = returnTo;
+        window.location.href = "/agendamento";
       }
     } catch (err) {
       setError(err.message || "Email ou senha invalidos");
@@ -36,7 +36,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    auth.loginViaGoogle("/dashboard");
+    auth.loginViaGoogle("/agendamento");
   };
 
   return (
