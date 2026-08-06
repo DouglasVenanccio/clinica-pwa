@@ -14,23 +14,21 @@ export const auth = {
 
   async loginViaEmailPassword(email, password) {
     const csrfToken = await getCsrfToken();
-    const res = await fetch('/api/auth/callback/credentials', {
+    const res = await fetch('/api/auth/callback/credentials?redirect=false&json=true', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         csrfToken,
         email,
         password,
-        redirect: 'false',
-        json: 'true',
       }),
       credentials: 'include',
     });
-    if (!res.ok) {
+    if (!res.ok && res.status !== 302) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || 'Email ou senha invalidos');
     }
-    const data = await res.json();
+    const data = await res.json().catch(() => ({ ok: true }));
     if (data?.error) throw new Error(data.error);
     return data;
   },

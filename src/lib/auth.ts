@@ -24,7 +24,7 @@ export const {
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        senha: { label: "Senha", type: "password" },
+        password: { label: "Senha", type: "password" },
       },
 
       /**
@@ -32,7 +32,7 @@ export const {
        * Valida credenciais contra o banco de dados.
        */
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.senha) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
@@ -54,7 +54,7 @@ export const {
 
         // Verifica a senha
         const senhaValida = await bcrypt.compare(
-          credentials.senha as string,
+          credentials.password as string,
           usuario.senha
         );
 
