@@ -18,6 +18,9 @@ export const {
   // Adapter para persistencia no Prisma
   adapter: PrismaAdapter(prisma),
 
+  // Confiar no host do proxy (Tailscale Funnel, Nginx, etc.)
+  trustHost: true,
+
   // Providers de autenticacao
   providers: [
     // Autenticacao por Google OAuth
