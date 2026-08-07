@@ -97,20 +97,21 @@ async function main() {
       const hour = hours[Math.abs(dayOffset) % hours.length];
 
       let status: string;
-      if (dayOffset < -1) status = "completed";
-      else if (dayOffset === -1) status = "completed";
-      else if (dayOffset === 0) status = "confirmed";
-      else status = "confirmed";
+      if (dayOffset < -1) status = "CONCLUIDO";
+      else if (dayOffset === -1) status = "CONCLUIDO";
+      else if (dayOffset === 0) status = "CONFIRMADO";
+      else status = "CONFIRMADO";
 
       const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       const timeStr = `${String(hour).padStart(2, "0")}:00`;
+      const endHour = hour + 1;
+      const endTimeStr = `${String(endHour).padStart(2, "0")}:00`;
 
       const existing = await prisma.agendamento.findFirst({
         where: {
           clienteId: clientes[clienteIdx].clienteId,
           profissionalId: profissionais[profIdx].profissionalId,
           data: new Date(`${dateStr}T00:00:00Z`),
-          hora: new Date(`1970-01-01T${timeStr}:00Z`),
         },
       });
 
@@ -120,10 +121,11 @@ async function main() {
           profissionalId: profissionais[profIdx].profissionalId,
           servicoId: servicos[servicoIdx].id,
           data: new Date(`${dateStr}T00:00:00Z`),
-          hora: new Date(`1970-01-01T${timeStr}:00Z`),
+          horaInicio: new Date(`1970-01-01T${timeStr}:00Z`),
+          horaFim: new Date(`1970-01-01T${endTimeStr}:00Z`),
           status: status as any,
           valorTotal: Number(servicos[servicoIdx].preco),
-          metodoPagamento: dayOffset % 2 === 0 ? "pix" : "cartao_credito" as any,
+          formaPagamento: dayOffset % 2 === 0 ? "PIX" : "CARTAO_CREDITO" as any,
           observacoes: dayOffset === 0 ? "Primeira visita" : null,
         });
       }
@@ -138,7 +140,7 @@ async function main() {
   // ========== PAGAMENTOS ==========
   console.log("4. Criando pagamentos...");
   const agendamentosPagos = await prisma.agendamento.findMany({
-    where: { status: "completed" },
+    where: { status: "CONCLUIDO" },
     take: 10,
   });
 
@@ -152,8 +154,8 @@ async function main() {
         data: {
           agendamentoId: ag.id,
           valor: ag.valorTotal,
-          metodo: ag.metodoPagamento || "pix",
-          status: "pago",
+          formaPagamento: ag.formaPagamento || "PIX",
+          status: "PAGO",
           dataPagamento: ag.data,
         },
       });
@@ -165,7 +167,7 @@ async function main() {
   // ========== AVALIACOES ==========
   console.log("5. Criando avaliacoes...");
   const agendamentosAvaliacao = await prisma.agendamento.findMany({
-    where: { status: "completed" },
+    where: { status: "CONCLUIDO" },
     take: 5,
   });
 
@@ -204,7 +206,7 @@ async function main() {
     const totalPagos = await prisma.pagamento.aggregate({
       where: {
         agendamento: { clienteId: c.clienteId },
-        status: "pago",
+        status: "PAGO",
       },
       _sum: { valor: true },
     });
