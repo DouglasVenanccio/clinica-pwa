@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
         profissional: { include: { usuario: true } },
         servico: true,
       },
-      orderBy: [{ data: "desc" }, { hora: "desc" }],
+      orderBy: [{ data: "desc" }, { horaInicio: "desc" }],
       take: limit,
     });
 
@@ -47,10 +47,11 @@ export async function GET(request: NextRequest) {
       servicoNome: a.servico?.nome || "",
       profissionalNome: a.profissional?.usuario?.nome || "",
       data: a.data,
-      horaInicio: a.hora,
+      horaInicio: a.horaInicio,
+      horaFim: a.horaFim,
       valorTotal: a.valorTotal,
       status: a.status,
-      formaPagamento: a.metodoPagamento,
+      formaPagamento: a.formaPagamento,
       criadoEm: a.criadoEm,
       cliente: a.cliente,
       profissional: a.profissional,
@@ -100,15 +101,19 @@ export async function POST(request: NextRequest) {
       servicoId = serv?.id || null;
     }
 
+    const time = body.time || "09:00";
+    const [h, m] = time.split(":").map(Number);
+
     const agendamento = await prisma.agendamento.create({
       data: {
         clienteId: clienteId || "",
         profissionalId: profissionalId || "",
         servicoId: servicoId || "",
         data: new Date(body.date || new Date()),
-        hora: new Date(`1970-01-01T${body.time || "09:00"}:00Z`),
-        status: (body.status?.toUpperCase() || "PENDING") as any,
-        metodoPagamento: body.paymentMethod?.toLowerCase() || "pix",
+        horaInicio: new Date(`1970-01-01T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`),
+        horaFim: new Date(`1970-01-01T${String(h + 1).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`),
+        status: (body.status?.toUpperCase() || "PENDENTE") as any,
+        formaPagamento: body.paymentMethod?.toUpperCase() || "PIX" as any,
         valorTotal: body.totalPrice || 0,
         observacoes: "",
       },

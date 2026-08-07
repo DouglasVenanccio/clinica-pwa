@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         usuario: true,
-        agendamentos: { where: { status: "completed" } },
+        agendamentos: { where: { status: "CONCLUIDO" } },
       },
     });
 

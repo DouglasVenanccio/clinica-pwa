@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       schedules.push({
         id: profId,
         profissionalNome: prof.usuario?.nome || "",
-        profissional,
+        profissional: prof,
         diasFolga,
         domingo: slots["domingo"] || "",
         segunda: slots["segunda"] || "",
