@@ -14,32 +14,43 @@ export const auth = {
 
   async loginViaEmailPassword(email, password) {
     const csrfToken = await getCsrfToken();
-    const res = await fetch('/api/auth/callback/credentials?redirect=false&json=true', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        csrfToken,
-        email,
-        password,
-      }),
-      credentials: 'include',
+
+    // Use hidden iframe to submit form - this properly handles cookies
+    return new Promise((resolve, reject) => {
+      const iframe = document.createElement('iframe');
+      iframe.name = 'login-frame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      iframe.onload = async () => {
+        await new Promise(r => setTimeout(r, 500));
+        document.body.removeChild(iframe);
+        try {
+          const sessionUser = await me();
+          resolve(sessionUser);
+        } catch {
+          resolve(null);
+        }
+      };
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/api/auth/callback/credentials';
+      form.target = 'login-frame';
+
+      const fields = { csrfToken, email, password };
+      for (const [k, v] of Object.entries(fields)) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = k;
+        input.value = v;
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
     });
-    if (!res.ok && res.status !== 302) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || 'Email ou senha invalidos');
-    }
-    const data = await res.json().catch(() => ({ ok: true }));
-    if (data?.error) throw new Error(data.error);
-
-    // Aguardar cookie de sessao ser processado
-    await new Promise(r => setTimeout(r, 500));
-
-    try {
-      const sessionUser = await me();
-      return sessionUser;
-    } catch {
-      return null;
-    }
   },
 
   async register({ email, password, nome, telefone }) {
