@@ -151,7 +151,8 @@ export default function Header() {
         </div>
 
         {open && (
-          <div className="lg:hidden pb-6 flex flex-col gap-1 border-t border-[#E0DCD6] pt-4">
+          <div className="lg:hidden fixed inset-x-0 top-20 bottom-0 bg-white z-40 overflow-y-auto">
+            <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-1">
             {navLinks.map((l) => (
               <a
                 key={l.label}
@@ -195,6 +196,7 @@ export default function Header() {
             >
               AGENDAR AGORA
             </Link>
+            </div>
           </div>
         )}
       </div>

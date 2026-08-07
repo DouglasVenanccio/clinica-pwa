@@ -107,6 +107,14 @@ const Service = {
     return (data.servicos || []).map(mapService);
   },
   async create(d) {
+    let categoriaId = null;
+    if (d.category) {
+      try {
+        const cats = await request('/categorias');
+        const cat = (cats.categorias || []).find((c) => c.nome === d.category);
+        if (cat) categoriaId = cat.id;
+      } catch {}
+    }
     const data = await request('/servicos', {
       method: 'POST',
       body: JSON.stringify({
@@ -114,13 +122,21 @@ const Service = {
         descricao: d.description,
         duracaoMinutos: d.duration_min,
         preco: d.price,
-        icon: d.icon,
-        categoria: d.category,
+        imagem: d.icon,
+        categoriaId,
       }),
     });
     return mapService(data.servico || data);
   },
   async update(id, d) {
+    let categoriaId = null;
+    if (d.category) {
+      try {
+        const cats = await request('/categorias');
+        const cat = (cats.categorias || []).find((c) => c.nome === d.category);
+        if (cat) categoriaId = cat.id;
+      } catch {}
+    }
     const data = await request(`/servicos/${id}`, {
       method: 'PUT',
       body: JSON.stringify({
@@ -128,8 +144,9 @@ const Service = {
         descricao: d.description,
         duracaoMinutos: d.duration_min,
         preco: d.price,
-        icon: d.icon,
-        categoria: d.category,
+        imagem: d.icon,
+        categoriaId,
+        ativo: true,
       }),
     });
     return mapService(data.servico || data);
