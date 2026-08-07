@@ -17,6 +17,7 @@ import AnalyticsAdmin from '@/pages/admin/Analytics';
 import AvailabilityAdmin from '@/pages/admin/Availability';
 import FinanceiroAdmin from '@/pages/admin/Financeiro';
 import ConfiguracoesAdmin from '@/pages/admin/Configuracoes';
+import UsersAdmin from '@/pages/admin/UsersAdmin';
 import Avaliacao from '@/pages/Avaliacao';
 import Fidelidade from '@/pages/Fidelidade';
 import MeusAgendamentos from '@/pages/MeusAgendamentos';
@@ -51,6 +52,7 @@ function App() {
             <Route path="/dashboard/disponibilidade" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><AvailabilityAdmin /></ProtectedRoute>} />
             <Route path="/dashboard/financeiro" element={<ProtectedRoute allowedRoles={["ADMIN"]}><FinanceiroAdmin /></ProtectedRoute>} />
             <Route path="/dashboard/configuracoes" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ConfiguracoesAdmin /></ProtectedRoute>} />
+            <Route path="/dashboard/usuarios" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UsersAdmin /></ProtectedRoute>} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Router>

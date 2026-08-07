@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import {
   LayoutDashboard, CalendarDays, Users, Scissors, Wallet, Settings,
-  LifeBuoy, CalendarClock, BarChart3, LogOut
+  LifeBuoy, CalendarClock, BarChart3, LogOut, UserCog
 } from 'lucide-react';
 
 const adminGroups = [
@@ -13,22 +13,25 @@ const adminGroups = [
   {
     label: 'Equipe',
     items: [
-      { icon: Scissors, label: 'Serviços', href: '/dashboard/servicos' },
+      { icon: Scissors, label: 'Servicos', href: '/dashboard/servicos' },
       { icon: Users, label: 'Profissionais', href: '/dashboard/profissionais' },
       { icon: CalendarClock, label: 'Disponibilidade', href: '/dashboard/disponibilidade' },
     ],
   },
   {
-    label: 'Análises',
-    items: [{ icon: BarChart3, label: 'Métricas', href: '/dashboard/analise' }],
+    label: 'Analises',
+    items: [{ icon: BarChart3, label: 'Metricas', href: '/dashboard/analise' }],
   },
   {
     label: 'Financeiro',
     items: [{ icon: Wallet, label: 'Financeiro', href: '/dashboard/financeiro' }],
   },
   {
-    label: 'Configurações',
-    items: [{ icon: Settings, label: 'Configurações', href: '/dashboard/configuracoes' }],
+    label: 'Administracao',
+    items: [
+      { icon: UserCog, label: 'Usuarios', href: '/dashboard/usuarios' },
+      { icon: Settings, label: 'Configuracoes', href: '/dashboard/configuracoes' },
+    ],
   },
 ];
 
