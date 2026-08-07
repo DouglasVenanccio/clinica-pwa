@@ -111,8 +111,14 @@ const Service = {
     if (d.category) {
       try {
         const cats = await request('/categorias');
-        const cat = (cats.categorias || []).find((c) => c.nome === d.category);
+        const cat = (cats.categorias || []).find((c) => c.nome.toLowerCase() === d.category.toLowerCase());
         if (cat) categoriaId = cat.id;
+      } catch {}
+    }
+    if (!categoriaId) {
+      try {
+        const cats = await request('/categorias');
+        if (cats.categorias?.length > 0) categoriaId = cats.categorias[0].id;
       } catch {}
     }
     const data = await request('/servicos', {
@@ -133,8 +139,14 @@ const Service = {
     if (d.category) {
       try {
         const cats = await request('/categorias');
-        const cat = (cats.categorias || []).find((c) => c.nome === d.category);
+        const cat = (cats.categorias || []).find((c) => c.nome.toLowerCase() === d.category.toLowerCase());
         if (cat) categoriaId = cat.id;
+      } catch {}
+    }
+    if (!categoriaId) {
+      try {
+        const cats = await request('/categorias');
+        if (cats.categorias?.length > 0) categoriaId = cats.categorias[0].id;
       } catch {}
     }
     const data = await request(`/servicos/${id}`, {
@@ -153,6 +165,10 @@ const Service = {
   },
   async delete(id) {
     await request(`/servicos/${id}`, { method: 'DELETE' });
+  },
+  async listCategories() {
+    const data = await request('/categorias');
+    return data.categorias || [];
   },
 };
 

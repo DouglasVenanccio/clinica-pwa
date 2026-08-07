@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
+import { useConfig } from '@/lib/ConfigContext';
 import { Menu, X, LogOut, User, LayoutDashboard, CalendarDays } from 'lucide-react';
 
 const navLinks = [
@@ -18,6 +19,8 @@ export default function Header() {
   const [userMenu, setUserMenu] = useState(false);
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+  const { config } = useConfig();
+  const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -47,7 +50,7 @@ export default function Header() {
               <span className="text-white font-display font-bold text-sm">B</span>
             </div>
             <span className="font-display font-semibold text-[#2b2622] tracking-tight">
-              Beleza <span className="text-[#B67D35]">&</span> Bem-Estar
+              {clinicName}
             </span>
           </Link>
 

@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Phone, MapPin, Instagram, Facebook, Send } from 'lucide-react';
+import { useConfig } from '@/lib/ConfigContext';
 
 export default function Footer() {
+  const { config } = useConfig();
+  const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
+  const telefone = config?.telefone || '(11) 4002-8922';
+  const endereco = config?.endereco || 'Av. Paulista, 1500 — São Paulo';
+  const horarioAbertura = config?.horario_abertura || '08:00';
+  const horarioFechamento = config?.horario_fechamento || '20:00';
   return (
     <footer id="contato" className="bg-[#2b2622] text-[#FDFBF7]">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-16">
@@ -11,14 +18,14 @@ export default function Footer() {
               <div className="w-9 h-9 rounded-full bg-[#B67D35] flex items-center justify-center">
                 <span className="text-white font-display font-bold text-sm">B</span>
               </div>
-              <span className="font-display font-semibold tracking-tight">Beleza & Bem-Estar</span>
+              <span className="font-display font-semibold tracking-tight">{clinicName}</span>
             </div>
             <p className="text-sm text-[#FDFBF7]/70 leading-relaxed mb-5">
               Estética e fisioterapia para realçar sua beleza e bem-estar.
             </p>
             <div className="space-y-3 text-sm text-[#FDFBF7]/80">
-              <p className="flex items-center gap-2"><Phone size={15} className="text-[#B67D35]" /> (11) 4002-8922</p>
-              <p className="flex items-center gap-2"><MapPin size={15} className="text-[#B67D35]" /> Av. Paulista, 1500 — São Paulo</p>
+              <p className="flex items-center gap-2"><Phone size={15} className="text-[#B67D35]" /> {telefone}</p>
+              <p className="flex items-center gap-2"><MapPin size={15} className="text-[#B67D35]" /> {endereco}</p>
             </div>
             <div className="flex gap-3 mt-5">
               <a href="#" className="w-9 h-9 rounded-full border border-[#FDFBF7]/20 flex items-center justify-center hover:bg-[#B67D35] hover:border-[#B67D35] transition-colors"><Instagram size={16} /></a>
@@ -29,8 +36,8 @@ export default function Footer() {
           <div>
             <h4 className="text-xs uppercase tracking-widest text-[#FDFBF7]/50 mb-5">Horários</h4>
             <ul className="space-y-3 text-sm text-[#FDFBF7]/80">
-              <li className="flex justify-between"><span>Seg — Sex</span><span>08h — 20h</span></li>
-              <li className="flex justify-between"><span>Sábado</span><span>08h — 18h</span></li>
+              <li className="flex justify-between"><span>Seg — Sex</span><span>{horarioAbertura} — {horarioFechamento}</span></li>
+              <li className="flex justify-between"><span>Sábado</span><span>{horarioAbertura} — 18h</span></li>
               <li className="flex justify-between"><span>Domingo</span><span>Fechado</span></li>
             </ul>
           </div>
@@ -63,7 +70,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-14 pt-8 border-t border-[#FDFBF7]/10 text-center text-xs text-[#FDFBF7]/50">
-          © 2025 Beleza & Bem-Estar. Todos os direitos reservados.
+          © 2025 {clinicName}. Todos os direitos reservados.
         </div>
       </div>
     </footer>

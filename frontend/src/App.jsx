@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider } from '@/lib/AuthContext';
+import { ConfigProvider } from '@/lib/ConfigContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from '@/components/site/Layout';
@@ -29,35 +30,37 @@ import ResetPassword from '@/pages/ResetPassword';
 function App() {
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <ScrollToTop />
-          <Routes>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
-              <Route path="/avaliacao" element={<ProtectedRoute><Avaliacao /></ProtectedRoute>} />
-              <Route path="/fidelidade" element={<ProtectedRoute><Fidelidade /></ProtectedRoute>} />
-              <Route path="/meus-agendamentos" element={<ProtectedRoute><MeusAgendamentos /></ProtectedRoute>} />
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastro" element={<Register />} />
-            <Route path="/esqueci-senha" element={<ForgotPassword />} />
-            <Route path="/redefinir-senha" element={<ResetPassword />} />
-            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Admin /></ProtectedRoute>} />
-            <Route path="/dashboard/agendamentos" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Appointments /></ProtectedRoute>} />
-            <Route path="/dashboard/servicos" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ServicesAdmin /></ProtectedRoute>} />
-            <Route path="/dashboard/profissionais" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ProfessionalsAdmin /></ProtectedRoute>} />
-            <Route path="/dashboard/analise" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AnalyticsAdmin /></ProtectedRoute>} />
-            <Route path="/dashboard/disponibilidade" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><AvailabilityAdmin /></ProtectedRoute>} />
-            <Route path="/dashboard/financeiro" element={<ProtectedRoute allowedRoles={["ADMIN"]}><FinanceiroAdmin /></ProtectedRoute>} />
-            <Route path="/dashboard/configuracoes" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ConfiguracoesAdmin /></ProtectedRoute>} />
-            <Route path="/dashboard/usuarios" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UsersAdmin /></ProtectedRoute>} />
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
+      <ConfigProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <ScrollToTop />
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/agendamento" element={<ProtectedRoute><Agendamento /></ProtectedRoute>} />
+                <Route path="/avaliacao" element={<ProtectedRoute><Avaliacao /></ProtectedRoute>} />
+                <Route path="/fidelidade" element={<ProtectedRoute><Fidelidade /></ProtectedRoute>} />
+                <Route path="/meus-agendamentos" element={<ProtectedRoute><MeusAgendamentos /></ProtectedRoute>} />
+              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="/cadastro" element={<Register />} />
+              <Route path="/esqueci-senha" element={<ForgotPassword />} />
+              <Route path="/redefinir-senha" element={<ResetPassword />} />
+              <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Admin /></ProtectedRoute>} />
+              <Route path="/dashboard/agendamentos" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Appointments /></ProtectedRoute>} />
+              <Route path="/dashboard/servicos" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ServicesAdmin /></ProtectedRoute>} />
+              <Route path="/dashboard/profissionais" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ProfessionalsAdmin /></ProtectedRoute>} />
+              <Route path="/dashboard/analise" element={<ProtectedRoute allowedRoles={["ADMIN"]}><AnalyticsAdmin /></ProtectedRoute>} />
+              <Route path="/dashboard/disponibilidade" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><AvailabilityAdmin /></ProtectedRoute>} />
+              <Route path="/dashboard/financeiro" element={<ProtectedRoute allowedRoles={["ADMIN"]}><FinanceiroAdmin /></ProtectedRoute>} />
+              <Route path="/dashboard/configuracoes" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ConfiguracoesAdmin /></ProtectedRoute>} />
+              <Route path="/dashboard/usuarios" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UsersAdmin /></ProtectedRoute>} />
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </ConfigProvider>
     </AuthProvider>
   )
 }

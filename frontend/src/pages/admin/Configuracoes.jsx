@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import { api } from '@/api/apiClient';
+import { useConfig } from '@/lib/ConfigContext';
 import { ArrowLeft, Settings, Save, Loader2, Upload, Image } from 'lucide-react';
 
 const DEFAULTS = {
@@ -27,6 +28,7 @@ export default function Configuracoes() {
   const [saving, setSaving] = useState(false);
   const logoInput = useRef(null);
   const faviconInput = useRef(null);
+  const { refreshConfig } = useConfig();
 
   useEffect(() => {
     api.Config.get()
@@ -57,7 +59,7 @@ export default function Configuracoes() {
     setSaving(true);
     try {
       await api.Config.save(config);
-      // Aplicar titulo do site
+      await refreshConfig();
       if (config.site_title) {
         document.title = config.site_title;
         localStorage.setItem('site_title', config.site_title);
