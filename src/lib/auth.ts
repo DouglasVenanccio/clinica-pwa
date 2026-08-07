@@ -53,8 +53,8 @@ export const {
           },
         });
 
-        // Verifica se o usuario existe e esta ativo
-        if (!usuario || !usuario.ativo) {
+        // Verifica se o usuario existe, esta ativo e tem senha
+        if (!usuario || !usuario.ativo || !usuario.senha) {
           return null;
         }
 

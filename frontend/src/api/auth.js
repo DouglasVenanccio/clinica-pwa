@@ -13,18 +13,6 @@ export const auth = {
   },
 
   async loginViaEmailPassword(email, password) {
-    // Limpar sessao anterior antes de criar nova
-    try {
-      const oldCsrf = await getCsrfToken();
-      await fetch(`/api/auth/signout?csrfToken=${encodeURIComponent(oldCsrf)}`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      await new Promise(r => setTimeout(r, 200));
-    } catch {
-      // ignorar erro ao limpar sessao antiga
-    }
-
     const csrfToken = await getCsrfToken();
     const res = await fetch('/api/auth/callback/credentials?redirect=false&json=true', {
       method: 'POST',
@@ -110,9 +98,12 @@ export const auth = {
 
   async logout() {
     const csrfToken = await getCsrfToken();
-    await fetch(`/api/auth/signout?csrfToken=${encodeURIComponent(csrfToken)}`, {
-      method: 'GET',
+    const res = await fetch('/api/auth/signout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ csrfToken }),
       credentials: 'include',
     });
+    return res;
   },
 };
