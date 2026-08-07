@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Gift, Crown, Star, Gem, ArrowRight } from 'lucide-react';
+import { useConfig } from '@/lib/ConfigContext';
 
 const tiers = [
   { icon: Star, name: 'Bronze', min: '0 pts', color: 'text-amber-700 bg-amber-50', desc: '1 ponto a cada R$1' },
@@ -9,6 +10,8 @@ const tiers = [
 ];
 
 export default function Loyalty() {
+  const { config } = useConfig();
+  const corPrimaria = config?.cor_primaria || '#B67D35';
   return (
     <section id="fidelidade" className="py-24 bg-[#2b2622] text-[#FDFBF7]">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -36,7 +39,7 @@ export default function Loyalty() {
         </div>
 
         <div className="text-center mt-12">
-          <Link to="/fidelidade" className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#B67D35] hover:bg-[#9c6829] rounded-full text-sm font-medium transition-colors">
+          <Link to="/fidelidade" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium transition-colors text-white" style={{ backgroundColor: corPrimaria }}>
             Consultar meus pontos <ArrowRight size={16} />
           </Link>
         </div>

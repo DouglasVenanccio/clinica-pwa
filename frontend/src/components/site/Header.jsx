@@ -21,6 +21,7 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const { config } = useConfig();
   const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
+  const corPrimaria = config?.cor_primaria || '#B67D35';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -60,7 +61,7 @@ export default function Header() {
             {config?.logo_url ? (
               <img src={config.logo_url} alt={clinicName} className="h-9 w-auto object-contain" />
             ) : (
-              <div className="w-9 h-9 rounded-full bg-[#B67D35] flex items-center justify-center">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: corPrimaria }}>
                 <span className="text-white font-display font-bold text-sm">B</span>
               </div>
             )}
@@ -88,7 +89,7 @@ export default function Header() {
                   onClick={() => setUserMenu((v) => !v)}
                   className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-[#F5EFE6] transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#B67D35] flex items-center justify-center text-white font-display font-semibold text-xs">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-display font-semibold text-xs" style={{ backgroundColor: corPrimaria }}>
                     {initials}
                   </div>
                   <span className="hidden sm:block text-sm font-medium text-[#2b2622] max-w-[100px] truncate">
@@ -153,7 +154,8 @@ export default function Header() {
 
             <Link
               to="/agendamento"
-              className="hidden sm:inline-flex items-center px-5 py-2.5 bg-[#B67D35] hover:bg-[#9c6829] text-white text-sm font-medium rounded-full transition-colors"
+              className="hidden sm:inline-flex items-center px-5 py-2.5 text-white text-sm font-medium rounded-full transition-colors hover:opacity-90"
+              style={{ backgroundColor: corPrimaria }}
             >
               AGENDAR AGORA
             </Link>
@@ -211,7 +213,8 @@ export default function Header() {
             <Link
               to="/agendamento"
               onClick={() => setOpen(false)}
-              className="mt-2 inline-flex justify-center items-center px-5 py-2.5 bg-[#B67D35] text-white text-sm font-medium rounded-full"
+              className="mt-2 inline-flex justify-center items-center px-5 py-2.5 text-white text-sm font-medium rounded-full"
+              style={{ backgroundColor: corPrimaria }}
             >
               AGENDAR AGORA
             </Link>

@@ -5,6 +5,7 @@ import { useConfig } from '@/lib/ConfigContext';
 export default function GiftCard() {
   const { config } = useConfig();
   const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
+  const corPrimaria = config?.cor_primaria || '#B67D35';
   return (
     <section id="pacotes" className="py-24 bg-[#FDFBF7]">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -12,7 +13,7 @@ export default function GiftCard() {
           <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-[#B67D35]/20 blur-3xl" />
           <div className="relative grid lg:grid-cols-2 gap-10 items-center">
             <div>
-              <div className="w-14 h-14 rounded-2xl bg-[#B67D35] flex items-center justify-center mb-6">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: corPrimaria }}>
                 <Gift size={26} className="text-white" />
               </div>
               <h2 className="font-display font-bold text-3xl lg:text-5xl text-[#FDFBF7] tracking-tight leading-tight">
@@ -23,13 +24,14 @@ export default function GiftCard() {
               </p>
               <Link
                 to="/agendamento"
-                className="inline-flex items-center mt-8 px-7 py-3.5 bg-[#B67D35] hover:bg-[#9c6829] text-white font-medium rounded-full transition-colors"
+                className="inline-flex items-center mt-8 px-7 py-3.5 text-white font-medium rounded-full transition-colors hover:opacity-90"
+                style={{ backgroundColor: corPrimaria }}
               >
                 Adquirir Vale-Presente
               </Link>
             </div>
             <div className="hidden lg:flex justify-end">
-              <div className="w-72 h-44 rounded-2xl bg-[#B67D35] p-6 rotate-3 shadow-2xl flex flex-col justify-between">
+              <div className="w-72 h-44 rounded-2xl p-6 rotate-3 shadow-2xl flex flex-col justify-between" style={{ backgroundColor: corPrimaria }}>
                 <div className="flex justify-between items-start">
                   <span className="text-white/80 text-xs uppercase tracking-widest">Vale-Presente</span>
                   <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center">

@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Image } from '@/components/ui/image';
 import { Users, BadgeCheck, HeartHandshake, Cpu, ArrowRight, Lock } from 'lucide-react';
+import { useConfig } from '@/lib/ConfigContext';
 
-const HERO_IMG = 'https://media.base44.com/images/public/6a73912b262c01040476c9f7/7892385a8_generated_de9cc185.png';
+const DEFAULT_HERO_IMG = 'https://media.base44.com/images/public/6a73912b262c01040476c9f7/7892385a8_generated_de9cc185.png';
 
 const features = [
   { icon: Users, label: 'Atendimento Personalizado' },
@@ -12,10 +13,26 @@ const features = [
 ];
 
 export default function Hero() {
+  const { config } = useConfig();
+  const heroImg = config?.hero_imagem_url || DEFAULT_HERO_IMG;
+  const heroTitle = config?.hero_titulo || 'Cuidado que Transforma';
+  const heroSubtitle = config?.hero_subtitulo || 'Estética e fisioterapia para realçar sua beleza e bem-estar.';
+  const heroCta = config?.hero_cta_texto || 'Agendar Seu Horário';
+  const promoTitle = config?.promo_titulo || 'Pacote Bem-Estar Completo';
+  const promoPrice = config?.promo_preco || 'R$ 150,00';
+  const promoOriginal = config?.promo_preco_original || 'R$ 300,00';
+  const promoDesc = config?.promo_descricao || 'Um presente de autocuidado, bem-estar e relaxamento.';
+  const corPrimaria = config?.cor_primaria || '#B67D35';
+  const corSecundaria = config?.cor_secundaria || '#2b2622';
+
+  const titleWords = heroTitle.split(' ');
+  const lastWord = titleWords.pop();
+  const titlePrefix = titleWords.join(' ');
+
   return (
     <section id="inicio" className="relative min-h-[760px] flex items-center pt-20 overflow-hidden">
       <div className="absolute inset-0">
-        <Image src={HERO_IMG} alt="Clínica de estética e bem-estar" className="w-full h-full object-cover" fittingType="fill" />
+        <Image src={heroImg} alt="Clínica de estética e bem-estar" className="w-full h-full object-cover" fittingType="fill" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#2b2622]/85 via-[#2b2622]/55 to-[#2b2622]/20" />
       </div>
 
@@ -25,10 +42,10 @@ export default function Hero() {
             Estética & Fisioterapia
           </span>
           <h1 className="font-display font-bold text-5xl lg:text-7xl leading-[1.05] tracking-tight">
-            Cuidado que <span className="text-[#D9A862]">Transforma</span>
+            {titlePrefix} <span className="text-[#D9A862]">{lastWord}</span>
           </h1>
           <p className="mt-6 text-lg text-[#FDFBF7]/80 max-w-md leading-relaxed">
-            Estética e fisioterapia para realçar sua beleza e bem-estar.
+            {heroSubtitle}
           </p>
 
           <div className="grid grid-cols-2 gap-4 mt-10 max-w-lg">
@@ -44,42 +61,47 @@ export default function Hero() {
 
           <Link
             to="/agendamento"
-            className="inline-flex items-center gap-2 mt-10 px-7 py-3.5 bg-[#B67D35] hover:bg-[#9c6829] text-white font-medium rounded-full transition-colors group"
+            className="inline-flex items-center gap-2 mt-10 px-7 py-3.5 text-white font-medium rounded-full transition-colors group"
+            style={{ backgroundColor: corPrimaria }}
           >
-            Agendar Seu Horário
+            {heroCta}
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
         <div className="flex flex-col items-end gap-5">
           <div className="bg-[#FDFBF7] rounded-2xl p-6 shadow-2xl border border-[#E0DCD6] max-w-xs">
-            <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest bg-[#B67D35] text-white rounded-full font-semibold">
+            <span
+              className="inline-block px-3 py-1 text-[10px] uppercase tracking-widest text-white rounded-full font-semibold"
+              style={{ backgroundColor: corPrimaria }}
+            >
               Oferta Especial
             </span>
-            <p className="mt-4 text-sm text-[#2b2622]/60">Pacote Bem-Estar Completo</p>
+            <p className="mt-4 text-sm text-[#2b2622]/60">{promoTitle}</p>
             <div className="flex items-baseline gap-3 mt-1">
-              <span className="text-lg text-[#2b2622]/40 line-through">De R$ 300,00</span>
+              <span className="text-lg text-[#2b2622]/40 line-through">De {promoOriginal}</span>
             </div>
-            <div className="text-4xl font-display font-bold text-[#B67D35]">R$ 150,00</div>
+            <div className="text-4xl font-display font-bold" style={{ color: corPrimaria }}>{promoPrice}</div>
             <p className="text-sm text-[#2b2622]/70 mt-3 leading-relaxed">
-              Um presente de autocuidado, bem-estar e relaxamento.
+              {promoDesc}
             </p>
             <Link
               to="/agendamento"
-              className="mt-5 inline-flex w-full justify-center items-center px-5 py-3 bg-[#2b2622] hover:bg-[#3d342d] text-[#FDFBF7] text-sm font-medium rounded-full transition-colors"
+              className="mt-5 inline-flex w-full justify-center items-center px-5 py-3 text-[#FDFBF7] text-sm font-medium rounded-full transition-colors"
+              style={{ backgroundColor: corSecundaria }}
             >
               Aproveitar Oferta
             </Link>
           </div>
 
-          <BookingWidget />
+          <BookingWidget corPrimaria={corPrimaria} />
         </div>
       </div>
     </section>
   );
 }
 
-function BookingWidget() {
+function BookingWidget({ corPrimaria }) {
   return (
     <div className="bg-[#FDFBF7]/95 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-[#E0DCD6] w-full max-w-xs">
       <h3 className="font-display font-semibold text-[#2b2622] mb-1">Agendar Horário</h3>
@@ -106,7 +128,7 @@ function BookingWidget() {
           <option>14:00</option>
         </select>
       </div>
-      <Link to="/agendamento" className="mt-4 inline-flex w-full justify-center items-center px-5 py-3 bg-[#B67D35] hover:bg-[#9c6829] text-white text-sm font-medium rounded-full transition-colors">
+      <Link to="/agendamento" className="mt-4 inline-flex w-full justify-center items-center px-5 py-3 text-white text-sm font-medium rounded-full transition-colors" style={{ backgroundColor: corPrimaria }}>
         Ver Disponibilidade
       </Link>
       <p className="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-[#2b2622]/50">

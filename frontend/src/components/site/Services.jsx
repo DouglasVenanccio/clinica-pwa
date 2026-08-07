@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { api } from '@/api/apiClient';
+import { useConfig } from '@/lib/ConfigContext';
 import { Sparkles, Droplets, Waves, Activity, PersonStanding, Sun, Clock, ArrowRight } from 'lucide-react';
 
 const ICONS = { Sparkles, Droplets, Waves, Activity, PersonStanding, Sun };
@@ -15,6 +16,8 @@ const benefits = [
 export default function Services() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { config } = useConfig();
+  const corPrimaria = config?.cor_primaria || '#B67D35';
 
   useEffect(() => {
     api.Service.list().then((s) => {
