@@ -354,4 +354,39 @@ const Client = {
   },
 };
 
-export const api = { Service, Professional, Appointment, Schedule, Review, LoyaltyCard, Client };
+const Config = {
+  async get() {
+    const data = await request('/configuracoes');
+    return data;
+  },
+  async save(d) {
+    const data = await request('/configuracoes', {
+      method: 'PUT',
+      body: JSON.stringify(d),
+    });
+    return data;
+  },
+};
+
+const User = {
+  async list({ search, role } = {}) {
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    if (role) params.set('role', role);
+    const qs = params.toString();
+    const data = await request(`/usuarios${qs ? '?' + qs : ''}`);
+    return data.usuarios || data;
+  },
+  async update(id, d) {
+    const data = await request('/usuarios', {
+      method: 'PUT',
+      body: JSON.stringify({ id, ...d }),
+    });
+    return data;
+  },
+  async delete(id) {
+    await request(`/usuarios?id=${id}`, { method: 'DELETE' });
+  },
+};
+
+export const api = { Service, Professional, Appointment, Schedule, Review, LoyaltyCard, Client, Config, User };
