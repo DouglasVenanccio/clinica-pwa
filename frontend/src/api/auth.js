@@ -26,7 +26,7 @@ export const auth = {
         await new Promise(r => setTimeout(r, 500));
         document.body.removeChild(iframe);
         try {
-          const sessionUser = await me();
+          const sessionUser = await auth.me();
           resolve(sessionUser);
         } catch {
           resolve(null);

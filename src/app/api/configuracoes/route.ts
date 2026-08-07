@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/api-helpers";
 
 /**
  * GET /api/configuracoes
@@ -39,6 +40,9 @@ export async function GET() {
  */
 export async function PUT(request: NextRequest) {
   try {
+    const session = await requireAdmin();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const body = await request.json();
     const entries = Object.entries(body).filter(([k]) => typeof body[k] === "string" || typeof body[k] === "number" || typeof body[k] === "boolean");
 

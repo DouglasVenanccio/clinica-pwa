@@ -23,9 +23,33 @@ export async function PUT(
     const agendamento = await prisma.agendamento.update({
       where: { id },
       data,
-      include: {
-        cliente: { include: { usuario: true } },
-        profissional: { include: { usuario: true } },
+      select: {
+        id: true,
+        data: true,
+        horaInicio: true,
+        horaFim: true,
+        valorTotal: true,
+        status: true,
+        formaPagamento: true,
+        criadoEm: true,
+        cliente: {
+          select: {
+            id: true,
+            pontosFidelidade: true,
+            telefone: true,
+            usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+          },
+        },
+        profissional: {
+          select: {
+            id: true,
+            especialidade: true,
+            bio: true,
+            ativo: true,
+            rating: true,
+            usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+          },
+        },
         servico: true,
       },
     });

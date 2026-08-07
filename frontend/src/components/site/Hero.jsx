@@ -85,21 +85,21 @@ function BookingWidget() {
       <h3 className="font-display font-semibold text-[#2b2622] mb-1">Agendar Horário</h3>
       <p className="text-xs text-[#2b2622]/60 mb-4">Reserve em segundos</p>
       <div className="space-y-3">
-        <select className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]">
+        <select aria-label="Serviço" className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]">
           <option value="">Selecione um serviço</option>
           <option>Limpeza de Pele</option>
           <option>Drenagem Linfática</option>
           <option>Massagem Modeladora</option>
           <option>Acupuntura</option>
         </select>
-        <select className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]">
+        <select aria-label="Profissional" className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]">
           <option value="">Qual profissional?</option>
           <option>Juliana A.</option>
           <option>Carla S.</option>
           <option>Indiferente</option>
         </select>
-        <input type="date" className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]" />
-        <select className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]">
+        <input type="date" aria-label="Data do agendamento" className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]" />
+        <select aria-label="Horário" className="w-full px-4 py-2.5 bg-white border border-[#E0DCD6] rounded-full text-sm text-[#2b2622] focus:outline-none focus:border-[#B67D35]">
           <option value="">Escolha o horário</option>
           <option>08:00</option>
           <option>10:00</option>

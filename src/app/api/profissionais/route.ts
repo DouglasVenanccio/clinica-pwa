@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import { stripSensitiveMany } from "@/lib/api-helpers";
 
 /**
  * GET /api/profissionais?servicoId=xxx
@@ -16,9 +17,18 @@ export async function GET(request: NextRequest) {
     if (servicoId) {
       const profServicos = await prisma.profissionalServico.findMany({
         where: { servicoId },
-        include: {
+        select: {
           profissional: {
-            include: { usuario: true },
+            select: {
+              id: true,
+              usuarioId: true,
+              especialidade: true,
+              bio: true,
+              ativo: true,
+              rating: true,
+              criadoEm: true,
+              usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+            },
           },
         },
       });
@@ -29,7 +39,16 @@ export async function GET(request: NextRequest) {
     } else {
       const allProf = await prisma.profissional.findMany({
         where: { ativo: true },
-        include: { usuario: true },
+        select: {
+          id: true,
+          usuarioId: true,
+          especialidade: true,
+          bio: true,
+          ativo: true,
+          rating: true,
+          criadoEm: true,
+          usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+        },
       });
       profissionais = allProf;
     }
@@ -71,7 +90,16 @@ export async function POST(request: NextRequest) {
         especialidade: body.especialidade,
         bio: body.bio,
       },
-      include: { usuario: true },
+      select: {
+        id: true,
+        usuarioId: true,
+        especialidade: true,
+        bio: true,
+        ativo: true,
+        rating: true,
+        criadoEm: true,
+        usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+      },
     });
 
     return NextResponse.json({ profissional }, { status: 201 });

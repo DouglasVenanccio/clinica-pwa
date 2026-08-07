@@ -24,7 +24,16 @@ export async function PUT(
           },
         },
       },
-      include: { usuario: true },
+      select: {
+        id: true,
+        usuarioId: true,
+        especialidade: true,
+        bio: true,
+        ativo: true,
+        rating: true,
+        criadoEm: true,
+        usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+      },
     });
 
     return NextResponse.json({ profissional });

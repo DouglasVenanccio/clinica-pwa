@@ -1,14 +1,18 @@
 const API_BASE = '/api';
 
 async function request(url, options = {}) {
+  const { headers: customHeaders, ...restOptions } = options;
   const res = await fetch(`${API_BASE}${url}`, {
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-    ...options,
+    headers: { 'Content-Type': 'application/json', ...customHeaders },
+    ...restOptions,
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
-  return data;
+  if (!res.ok) {
+    let data;
+    try { data = await res.json(); } catch { data = {}; }
+    throw new Error(data.error || `Request failed (${res.status})`);
+  }
+  return res.json();
 }
 
 function mapService(s) {

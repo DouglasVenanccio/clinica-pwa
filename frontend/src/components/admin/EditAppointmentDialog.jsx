@@ -44,6 +44,8 @@ export default function EditAppointmentDialog({ open, appointment, onClose, onSa
       });
       onSaved();
       onClose();
+    } catch (err) {
+      alert('Erro ao salvar: ' + (err.message || 'Tente novamente.'));
     } finally {
       setSaving(false);
     }

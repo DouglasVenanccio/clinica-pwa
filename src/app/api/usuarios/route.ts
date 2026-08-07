@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/api-helpers";
 
 /**
  * GET /api/usuarios
@@ -24,7 +25,15 @@ export async function GET(request: NextRequest) {
 
     const usuarios = await prisma.usuario.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        telefone: true,
+        avatar: true,
+        role: true,
+        ativo: true,
+        criadoEm: true,
         cliente: { select: { id: true, pontosFidelidade: true } },
         profissional: { select: { id: true, especialidade: true } },
       },
@@ -84,6 +93,9 @@ export async function GET(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
+    const session = await requireAdmin();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const body = await request.json();
     const { id, role, ativo } = body;
 
@@ -114,6 +126,9 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
+    const session = await requireAdmin();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 

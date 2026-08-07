@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { stripSensitiveMany } from "@/lib/api-helpers";
 
 /**
  * GET /api/appointments
@@ -30,9 +31,33 @@ export async function GET(request: NextRequest) {
 
     const agendamentos = await prisma.agendamento.findMany({
       where,
-      include: {
-        cliente: { include: { usuario: true } },
-        profissional: { include: { usuario: true } },
+      select: {
+        id: true,
+        data: true,
+        horaInicio: true,
+        horaFim: true,
+        valorTotal: true,
+        status: true,
+        formaPagamento: true,
+        criadoEm: true,
+        cliente: {
+          select: {
+            id: true,
+            pontosFidelidade: true,
+            telefone: true,
+            usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+          },
+        },
+        profissional: {
+          select: {
+            id: true,
+            especialidade: true,
+            bio: true,
+            ativo: true,
+            rating: true,
+            usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+          },
+        },
         servico: true,
       },
       orderBy: [{ data: "desc" }, { horaInicio: "desc" }],
@@ -117,9 +142,33 @@ export async function POST(request: NextRequest) {
         valorTotal: body.totalPrice || 0,
         observacoes: "",
       },
-      include: {
-        cliente: { include: { usuario: true } },
-        profissional: { include: { usuario: true } },
+      select: {
+        id: true,
+        data: true,
+        horaInicio: true,
+        horaFim: true,
+        valorTotal: true,
+        status: true,
+        formaPagamento: true,
+        criadoEm: true,
+        cliente: {
+          select: {
+            id: true,
+            pontosFidelidade: true,
+            telefone: true,
+            usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+          },
+        },
+        profissional: {
+          select: {
+            id: true,
+            especialidade: true,
+            bio: true,
+            ativo: true,
+            rating: true,
+            usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+          },
+        },
         servico: true,
       },
     });

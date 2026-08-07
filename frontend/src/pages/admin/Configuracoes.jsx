@@ -103,7 +103,7 @@ export default function Configuracoes() {
 
         <div className="flex items-center gap-3 mb-8">
           <div className="w-11 h-11 rounded-xl bg-[#B67D35]/10 flex items-center justify-center">
-            <Settings size={22} className="text-[B67D35]" />
+            <Settings size={22} className="text-[#B67D35]" />
           </div>
           <div>
             <h1 className="text-2xl font-display font-bold text-[#2b2622]">Configuracoes</h1>

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Gift } from 'lucide-react';
+import { useConfig } from '@/lib/ConfigContext';
 
 export default function GiftCard() {
+  const { config } = useConfig();
+  const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
   return (
     <section id="pacotes" className="py-24 bg-[#FDFBF7]">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -35,7 +38,7 @@ export default function GiftCard() {
                 </div>
                 <div>
                   <p className="text-white text-3xl font-display font-bold">R$ 150,00</p>
-                  <p className="text-white/70 text-xs mt-1">Beleza & Bem-Estar</p>
+                  <p className="text-white/70 text-xs mt-1">{clinicName}</p>
                 </div>
               </div>
             </div>

@@ -28,8 +28,8 @@ export default function Footer() {
               <p className="flex items-center gap-2"><MapPin size={15} className="text-[#B67D35]" /> {endereco}</p>
             </div>
             <div className="flex gap-3 mt-5">
-              <a href="#" className="w-9 h-9 rounded-full border border-[#FDFBF7]/20 flex items-center justify-center hover:bg-[#B67D35] hover:border-[#B67D35] transition-colors"><Instagram size={16} /></a>
-              <a href="#" className="w-9 h-9 rounded-full border border-[#FDFBF7]/20 flex items-center justify-center hover:bg-[#B67D35] hover:border-[#B67D35] transition-colors"><Facebook size={16} /></a>
+              <a href="#" aria-label="Instagram" className="w-9 h-9 rounded-full border border-[#FDFBF7]/20 flex items-center justify-center hover:bg-[#B67D35] hover:border-[#B67D35] transition-colors"><Instagram size={16} /></a>
+              <a href="#" aria-label="Facebook" className="w-9 h-9 rounded-full border border-[#FDFBF7]/20 flex items-center justify-center hover:bg-[#B67D35] hover:border-[#B67D35] transition-colors"><Facebook size={16} /></a>
             </div>
           </div>
 
@@ -60,9 +60,10 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Seu e-mail"
+                aria-label="E-mail para newsletter"
                 className="flex-1 px-4 py-2.5 bg-[#FDFBF7]/5 border border-[#FDFBF7]/15 rounded-full text-sm text-[#FDFBF7] placeholder:text-[#FDFBF7]/40 focus:outline-none focus:border-[#B67D35]"
               />
-              <button className="w-11 h-11 shrink-0 rounded-full bg-[#B67D35] hover:bg-[#9c6829] flex items-center justify-center transition-colors">
+              <button aria-label="Enviar" className="w-11 h-11 shrink-0 rounded-full bg-[#B67D35] hover:bg-[#9c6829] flex items-center justify-center transition-colors">
                 <Send size={16} className="text-white" />
               </button>
             </form>

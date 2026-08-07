@@ -57,8 +57,8 @@ function App() {
               <Route path="/dashboard/usuarios" element={<ProtectedRoute allowedRoles={["ADMIN"]}><UsersAdmin /></ProtectedRoute>} />
               <Route path="*" element={<PageNotFound />} />
             </Routes>
+            <Toaster />
           </Router>
-          <Toaster />
         </QueryClientProvider>
       </ConfigProvider>
     </AuthProvider>

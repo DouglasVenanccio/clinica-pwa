@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/api-helpers";
 
 export async function GET() {
   try {
@@ -16,6 +17,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAdmin();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const body = await request.json();
     const categoria = await prisma.categoria.create({
       data: {
