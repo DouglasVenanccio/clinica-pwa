@@ -60,20 +60,6 @@ export default function Configuracoes() {
     try {
       await api.Config.save(config);
       await refreshConfig();
-      if (config.site_title) {
-        document.title = config.site_title;
-        localStorage.setItem('site_title', config.site_title);
-      }
-      if (config.logo_url) {
-        localStorage.setItem('logo_url', config.logo_url);
-      }
-      if (config.favicon_url) {
-        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.rel = 'icon';
-        link.href = config.favicon_url;
-        document.head.appendChild(link);
-        localStorage.setItem('favicon_url', config.favicon_url);
-      }
       alert('Configuracoes salvas com sucesso!');
     } catch {
       alert('Erro ao salvar configuracoes.');

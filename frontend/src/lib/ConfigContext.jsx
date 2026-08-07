@@ -3,6 +3,21 @@ import { api } from '@/api/apiClient';
 
 const ConfigContext = createContext(null);
 
+function applyConfigToDOM(data) {
+  if (data?.site_title) {
+    document.title = data.site_title;
+  }
+  if (data?.favicon_url) {
+    let link = document.querySelector("link[rel*='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = data.favicon_url;
+  }
+}
+
 export function ConfigProvider({ children }) {
   const [config, setConfig] = useState({
     nome_clinica: 'Beleza & Bem-Estar',
@@ -20,7 +35,10 @@ export function ConfigProvider({ children }) {
 
   useEffect(() => {
     api.Config.get()
-      .then((data) => setConfig((prev) => ({ ...prev, ...data })))
+      .then((data) => {
+        setConfig((prev) => ({ ...prev, ...data }));
+        applyConfigToDOM(data);
+      })
       .catch(() => {});
   }, []);
 
@@ -28,6 +46,7 @@ export function ConfigProvider({ children }) {
     try {
       const data = await api.Config.get();
       setConfig((prev) => ({ ...prev, ...data }));
+      applyConfigToDOM(data);
       return data;
     } catch {
       return config;

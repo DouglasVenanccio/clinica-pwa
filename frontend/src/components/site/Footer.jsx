@@ -15,9 +15,13 @@ export default function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
           <div>
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-9 h-9 rounded-full bg-[#B67D35] flex items-center justify-center">
-                <span className="text-white font-display font-bold text-sm">B</span>
-              </div>
+              {config?.logo_url ? (
+                <img src={config.logo_url} alt={clinicName} className="h-9 w-auto object-contain" />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-[#B67D35] flex items-center justify-center">
+                  <span className="text-white font-display font-bold text-sm">B</span>
+                </div>
+              )}
               <span className="font-display font-semibold tracking-tight">{clinicName}</span>
             </div>
             <p className="text-sm text-[#FDFBF7]/70 leading-relaxed mb-5">
