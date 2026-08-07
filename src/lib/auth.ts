@@ -17,6 +17,19 @@ export const {
   // Confiar no host do proxy (Tailscale Funnel, Nginx, etc.)
   trustHost: true,
 
+  // Configuracao de cookies - Nginx termina HTTPS, Next.js recebe HTTP
+  cookies: {
+    sessionToken: {
+      name: "authjs.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+  },
+
   // Providers de autenticacao
   providers: [
     // Autenticacao por Google OAuth
