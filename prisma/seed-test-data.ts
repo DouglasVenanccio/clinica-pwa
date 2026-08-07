@@ -54,7 +54,7 @@ async function main() {
     {
       titulo: "Pacote Relax 3x",
       descricao: "3 massagens relaxantes com 15% de desconto",
-      desconto: 15,
+      descontoPercentual: 15,
       dataInicio: new Date(now.getFullYear(), now.getMonth(), 1),
       dataFim: new Date(now.getFullYear(), now.getMonth() + 1, 0),
       ativo: true,
@@ -62,7 +62,7 @@ async function main() {
     {
       titulo: "Promo de Inverno",
       descricao: "Todos os servicos de estetica com 10% off no PIX",
-      desconto: 10,
+      descontoPercentual: 10,
       dataInicio: new Date(now.getFullYear(), now.getMonth(), 1),
       dataFim: new Date(now.getFullYear(), now.getMonth() + 2, 0),
       ativo: true,
