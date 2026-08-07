@@ -20,6 +20,7 @@ export async function PUT(
         categoriaId: body.categoriaId,
         ativo: body.ativo,
       },
+      include: { categoria: true },
     });
 
     return NextResponse.json({ servico });
@@ -39,9 +40,10 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    await prisma.servico.delete({
-      where: { id },
-    });
+    // Remover relacoes many-to-many antes de deletar
+    await prisma.profissionalServico.deleteMany({ where: { servicoId: id } });
+
+    await prisma.servico.delete({ where: { id } });
 
     return NextResponse.json({ message: "Servico removido com sucesso." });
   } catch (error) {

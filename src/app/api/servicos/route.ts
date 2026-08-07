@@ -31,17 +31,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const servico = await prisma.servico.create({
-      data: {
-        nome: body.nome,
-        descricao: body.descricao,
-        duracaoMinutos: body.duracaoMinutos,
-        preco: body.preco,
-        imagem: body.imagem,
-        categoriaId: body.categoriaId,
-      },
-      include: { categoria: true },
-    });
+      const servico = await prisma.servico.create({
+        data: {
+          nome: body.nome,
+          descricao: body.descricao,
+          duracaoMinutos: body.duracaoMinutos,
+          preco: body.preco,
+          imagem: body.imagem,
+          categoriaId: body.categoriaId || null,
+        },
+        include: { categoria: true },
+      });
 
     return NextResponse.json({ servico }, { status: 201 });
   } catch (error) {

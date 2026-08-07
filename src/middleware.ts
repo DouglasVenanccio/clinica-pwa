@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 /**
  * Middleware de protecao de rotas API.
  * Verifica autenticacao via session cookie e roles.
  *
- * Rotas publicas: /api/auth/*, /api/servicos, /api/profissionais, etc.
- * Rotas ADMIN-only: /api/servicos (PUT/DELETE), /api/profissionais (PUT/DELETE), /api/clientes
+ * Rotas publicas: /api/auth/*, /api/servicos (GET), /api/profissionais (GET), etc.
+ * Rotas ADMIN-only: /api/servicos (PUT/DELETE), /api/profissionais (PUT/DELETE), /api/clientes, /api/usuarios
  * Rotas protegidas: todas as outras /api/*
  */
 
@@ -23,28 +24,10 @@ const adminOnlyRoutes = [
   "/api/profissionais",
   "/api/clientes",
   "/api/promocoes",
-  "/api/configuracoes",
+  "/api/usuarios",
 ];
 
-/**
- * Decodifica JWT simple (sem verificacao de assinatura - apenas para leitura de payload).
- * O JWT ja foi verificado pelo Auth.js no lado do servidor.
- */
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-  try {
-    const parts = token.split(".");
-    if (parts.length !== 3) return null;
-    const payload = parts[1];
-    // Base64URL -> Base64
-    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
-    const decoded = Buffer.from(base64, "base64").toString("utf-8");
-    return JSON.parse(decoded);
-  } catch {
-    return null;
-  }
-}
-
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // So aplica middleware em rotas /api/
@@ -61,12 +44,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Para rotas API protegidas, verificar session cookie
-  const sessionCookie =
-    request.cookies.get("authjs.session-token") ||
-    request.cookies.get("__Secure-authjs.session-token");
+  // Para rotas API protegidas, verificar session via getToken (suporta JWE do Auth.js v5)
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  if (!sessionCookie) {
+  if (!token) {
     return NextResponse.json(
       { error: "Autenticacao obrigatoria" },
       { status: 401 }
@@ -83,8 +67,7 @@ export function middleware(request: NextRequest) {
     );
 
     if (isAdminRoute) {
-      const payload = decodeJwtPayload(sessionCookie.value);
-      const role = payload?.role as string | undefined;
+      const role = token.role as string | undefined;
 
       if (role !== "ADMIN") {
         return NextResponse.json(
