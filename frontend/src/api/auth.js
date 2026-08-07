@@ -13,6 +13,18 @@ export const auth = {
   },
 
   async loginViaEmailPassword(email, password) {
+    // Limpar sessao anterior antes de criar nova
+    try {
+      const oldCsrf = await getCsrfToken();
+      await fetch(`/api/auth/signout?csrfToken=${encodeURIComponent(oldCsrf)}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      await new Promise(r => setTimeout(r, 200));
+    } catch {
+      // ignorar erro ao limpar sessao antiga
+    }
+
     const csrfToken = await getCsrfToken();
     const res = await fetch('/api/auth/callback/credentials?redirect=false&json=true', {
       method: 'POST',
@@ -32,7 +44,7 @@ export const auth = {
     if (data?.error) throw new Error(data.error);
 
     // Aguardar cookie de sessao ser processado
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 500));
 
     try {
       const sessionUser = await me();
