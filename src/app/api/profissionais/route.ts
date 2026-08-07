@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import bcrypt from "bcrypt";
 
 /**
  * GET /api/profissionais?servicoId=xxx
@@ -51,11 +52,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    const hashedPassword = await bcrypt.hash(body.senha || "12345678", 12);
+
     const usuario = await prisma.usuario.create({
       data: {
         nome: body.nome,
         email: body.email,
-        senha: body.senha,
+        senha: hashedPassword,
         telefone: body.telefone,
         avatar: body.avatar,
         role: "PROFISSIONAL",

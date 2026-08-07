@@ -44,9 +44,29 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    await prisma.profissional.delete({
-      where: { id },
-    });
+    // Limpar dados dependentes antes de deletar
+    const agendamentoIds = (await prisma.agendamento.findMany({
+      where: { profissionalId: id },
+      select: { id: true },
+    })).map((a) => a.id);
+
+    if (agendamentoIds.length > 0) {
+      await prisma.avaliacao.deleteMany({ where: { agendamentoId: { in: agendamentoIds } } });
+      await prisma.pagamento.deleteMany({ where: { agendamentoId: { in: agendamentoIds } } });
+      await prisma.agendamento.deleteMany({ where: { profissionalId: id } });
+    }
+
+    await prisma.profissionalServico.deleteMany({ where: { profissionalId: id } });
+    await prisma.horarioDisponivel.deleteMany({ where: { profissionalId: id } });
+    await prisma.bloqueioHorario.deleteMany({ where: { profissionalId: id } });
+    await prisma.avaliacao.deleteMany({ where: { profissionalId: id } });
+
+    // Buscar e deletar usuario associado
+    const prof = await prisma.profissional.findUnique({ where: { id }, select: { usuarioId: true } });
+    await prisma.profissional.delete({ where: { id } });
+    if (prof) {
+      await prisma.usuario.delete({ where: { id: prof.usuarioId } });
+    }
 
     return NextResponse.json({ message: "Profissional removido com sucesso." });
   } catch (error) {

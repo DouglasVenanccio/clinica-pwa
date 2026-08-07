@@ -1,0 +1,2 @@
+#!/bin/bash
+PGPASSWORD=clinica123 psql -h 127.0.0.1 -U clinica -d clinica_pwa -c "SELECT 'servicos' as t, count(*) as c FROM servicos UNION ALL SELECT 'categorias', count(*) FROM categorias UNION ALL SELECT 'profissionais', count(*) FROM profissionais UNION ALL SELECT 'clientes', count(*) FROM clientes UNION ALL SELECT 'usuarios', count(*) FROM usuarios UNION ALL SELECT 'agendamentos', count(*) FROM agendamentos UNION ALL SELECT 'configuracoes', count(*) FROM configuracoes;"

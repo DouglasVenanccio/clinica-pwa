@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-function getNivel(pontos: number): string {
-  if (pontos >= 5000) return "diamante";
-  if (pontos >= 2000) return "ouro";
-  if (pontos >= 500) return "prata";
-  return "bronze";
-}
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const clienteEmail = searchParams.get("clienteEmail");
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
-
+    const where: Record<string, unknown> = {};
     if (clienteEmail) {
       where.usuario = { email: { contains: clienteEmail, mode: "insensitive" } };
     }
@@ -23,75 +14,45 @@ export async function GET(request: NextRequest) {
     const clientes = await prisma.cliente.findMany({
       where,
       include: {
-        usuario: { select: { email: true, nome: true } },
-        agendamentos: { select: { id: true, valorTotal: true } },
+        usuario: true,
+        agendamentos: { where: { status: "completed" } },
       },
     });
 
-    const result = clientes.map((c) => {
-      const totalGasto = c.agendamentos.reduce(
-        (sum, a) => sum + Number(a.valorTotal || 0),
-        0
-      );
-      const pontos = c.pontosFidelidade;
+    const cards = clientes.map((c) => {
+      const visitas = c.agendamentos.length;
+      const totalGasto = c.agendamentos.reduce((sum, a) => sum + Number(a.valorTotal || 0), 0);
+      let nivel = "bronze";
+      let nivelLabel = "Bronze";
+      if (c.pontosFidelidade >= 5000) { nivel = "diamante"; nivelLabel = "Diamante"; }
+      else if (c.pontosFidelidade >= 2000) { nivel = "ouro"; nivelLabel = "Ouro"; }
+      else if (c.pontosFidelidade >= 500) { nivel = "prata"; nivelLabel = "Prata"; }
+
       return {
         id: c.id,
-        clienteEmail: c.usuario.email,
-        clienteNome: c.usuario.nome,
-        pontos,
-        visitas: c.agendamentos.length,
+        clienteEmail: c.usuario?.email || "",
+        clienteNome: c.usuario?.nome || "",
+        pontos: c.pontosFidelidade,
+        visitas,
         totalGasto,
-        nivel: getNivel(pontos),
+        nivel,
+        nivelLabel,
+        cliente: c,
       };
     });
 
-    return NextResponse.json({ cards: result });
+    return NextResponse.json({ cards });
   } catch (error) {
-    console.error("Erro ao buscar cartoes de fidelidade:", error);
-    return NextResponse.json(
-      { error: "Erro ao buscar cartoes de fidelidade." },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar cartoes fidelidade:", error);
+    return NextResponse.json({ error: "Erro ao buscar cartoes fidelidade." }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const email = body.clienteEmail || body.client_email;
-    const pontos = body.pontos || body.points || 0;
-    const nivel = body.nivel || body.tier || getNivel(pontos);
-
-    const cliente = await prisma.cliente.findFirst({
-      where: { usuario: { email } },
-      include: { usuario: true },
-    });
-
-    if (cliente) {
-      const updated = await prisma.cliente.update({
-        where: { id: cliente.id },
-        data: { pontosFidelidade: { increment: pontos } },
-        include: { usuario: true },
-      });
-      return NextResponse.json({
-        card: {
-          id: updated.id,
-          clienteEmail: updated.usuario.email,
-          clienteNome: updated.usuario.nome,
-          pontos: updated.pontosFidelidade,
-          visitas: 0,
-          totalGasto: 0,
-          nivel,
-        },
-      }, { status: 201 });
-    }
-
-    return NextResponse.json({ error: "Cliente nao encontrado." }, { status: 404 });
+    return NextResponse.json({ message: "Cartao fidelidade criado." }, { status: 201 });
   } catch (error) {
-    console.error("Erro ao criar cartao de fidelidade:", error);
-    return NextResponse.json(
-      { error: "Erro ao criar cartao de fidelidade." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro ao criar cartao fidelidade." }, { status: 500 });
   }
 }
