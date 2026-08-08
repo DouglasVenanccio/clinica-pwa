@@ -59,6 +59,9 @@ export default function Header() {
             )}
             <span className="font-display font-semibold text-[17px] text-[#2b2622] tracking-tight leading-none">
               {clinicName}
+              <span className="block lg:hidden font-corpo text-[10px] text-[#2b2622]/50 font-medium mt-1">
+                Estética &amp; Fisioterapia
+              </span>
             </span>
           </Link>
 
