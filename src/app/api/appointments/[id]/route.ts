@@ -12,6 +12,15 @@ function timeToString(d: Date | string | null | undefined): string {
 }
 
 /**
+ * Converte um campo Date do Prisma para string "YYYY-MM-DD".
+ */
+function dateToString(d: Date | string | null | undefined): string {
+  if (!d) return "";
+  if (typeof d === "string") return d.substring(0, 10);
+  return d.toISOString().substring(0, 10);
+}
+
+/**
  * Mapeia o status enviado pelo frontend (ingles/minusculo) para o enum Prisma.
  */
 const STATUS_MAP: Record<string, string> = {
@@ -38,6 +47,23 @@ const PAGAMENTO_MAP: Record<string, string> = {
   PIX: "PIX",
   CARTAO_CREDITO: "CARTAO_CREDITO",
   CARTAO_DEBITO: "CARTAO_DEBITO",
+};
+
+/**
+ * Mapeia o enum Prisma de volta para o formato esperado pelo frontend.
+ */
+const STATUS_REVERSE: Record<string, string> = {
+  PENDENTE: "pending",
+  CONFIRMADO: "confirmed",
+  CANCELADO: "cancelled",
+  CONCLUIDO: "completed",
+  NAO_COMPARECEU: "no_show",
+};
+
+const PAGAMENTO_REVERSE: Record<string, string> = {
+  PIX: "pix",
+  CARTAO_CREDITO: "credit",
+  CARTAO_DEBITO: "debit",
 };
 
 export async function PUT(
@@ -93,7 +119,7 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json({ appointment: { ...agendamento, horaInicio: timeToString(agendamento.horaInicio), horaFim: timeToString(agendamento.horaFim), profissional: mapProfissional(agendamento.profissional) } });
+    return NextResponse.json({ appointment: { ...agendamento, data: dateToString(agendamento.data), horaInicio: timeToString(agendamento.horaInicio), horaFim: timeToString(agendamento.horaFim), status: STATUS_REVERSE[agendamento.status] || agendamento.status, formaPagamento: PAGAMENTO_REVERSE[agendamento.formaPagamento] || agendamento.formaPagamento, profissional: mapProfissional(agendamento.profissional) } });
   } catch (error) {
     console.error("Erro ao atualizar agendamento:", error);
     return NextResponse.json({ error: "Erro ao atualizar agendamento." }, { status: 500 });
