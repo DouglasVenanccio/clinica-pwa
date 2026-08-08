@@ -41,8 +41,10 @@ export default function Hero() {
           <span className="inline-block px-3 py-1 text-[11px] uppercase tracking-widest bg-[#B67D35]/20 text-[#E8C9A0] border border-[#B67D35]/30 rounded-full mb-6">
             Estética & Fisioterapia
           </span>
-          <h1 className="font-display font-bold text-5xl lg:text-7xl leading-[1.05] tracking-tight">
-            {titlePrefix} <span className="text-[#D9A862]">{lastWord}</span>
+          <h1 className="font-display font-bold text-[42px] sm:text-[52px] lg:text-[72px] leading-[0.98] tracking-tight">
+            {titlePrefix}
+            <br />
+            <span style={{ color: corPrimaria }}>{lastWord}</span>
           </h1>
           <p className="mt-6 text-lg text-[#FDFBF7]/80 max-w-md leading-relaxed">
             {heroSubtitle}

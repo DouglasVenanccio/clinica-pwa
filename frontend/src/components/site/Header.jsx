@@ -48,15 +48,15 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-3">
             {config?.logo_url ? (
-              <img src={config.logo_url} alt={clinicName} className="h-9 w-auto object-contain" />
+              <img src={config.logo_url} alt={clinicName} className="h-11 w-auto object-contain" />
             ) : (
-              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: corPrimaria }}>
-                <span className="text-white font-display font-bold text-sm">B</span>
+              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ backgroundColor: corPrimaria }}>
+                <span className="text-white font-display font-bold text-base">B</span>
               </div>
             )}
-            <span className="font-display font-semibold text-[#2b2622] tracking-tight">
+            <span className="font-display font-semibold text-[17px] text-[#2b2622] tracking-tight leading-none">
               {clinicName}
             </span>
           </Link>
