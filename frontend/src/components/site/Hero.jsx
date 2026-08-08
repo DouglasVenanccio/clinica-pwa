@@ -50,7 +50,7 @@ export default function Hero() {
             {heroSubtitle}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mt-10 max-w-lg">
+          <div className="hidden md:grid grid-cols-2 gap-4 mt-10 max-w-lg">
             {features.map((f) => (
               <div key={f.label} className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full border border-[#FDFBF7]/25 flex items-center justify-center shrink-0">

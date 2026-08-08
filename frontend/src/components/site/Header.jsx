@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useConfig } from '@/lib/ConfigContext';
-import { Menu, X, LogOut, User, LayoutDashboard, CalendarDays } from 'lucide-react';
+import { Menu, X, LogOut, User, LayoutDashboard, CalendarDays, Phone } from 'lucide-react';
 
 const navLinks = [
   { label: 'Inicio', href: '/#inicio' },
@@ -21,6 +21,7 @@ export default function Header() {
   const { config } = useConfig();
   const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
   const corPrimaria = config?.cor_primaria || '#B67D35';
+  const telefone = config?.telefone || '(11) 4002-8922';
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -160,6 +161,15 @@ export default function Header() {
               AGENDAR AGORA
             </Link>
 
+            <a
+              href={`tel:${telefone.replace(/[^0-9+]/g, '')}`}
+              aria-label="Ligar para a clínica"
+              className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-white shadow-sm"
+              style={{ backgroundColor: corPrimaria }}
+            >
+              <Phone size={18} />
+            </a>
+
             <button
               className="lg:hidden p-2 text-[#2b2622]"
               onClick={() => setOpen((o) => !o)}
@@ -167,8 +177,7 @@ export default function Header() {
               aria-expanded={open}
             >
               {open ? <X size={22} aria-label="Fechar menu" /> : <Menu size={22} />}
-            </button>
-          </div>
+            </button>          </div>
         </div>
 
         {open && (

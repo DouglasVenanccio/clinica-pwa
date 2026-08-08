@@ -29,16 +29,16 @@ export default function MobileNav() {
 
   return (
     <>
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[#E0DCD6]">
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-[#E0DCD6] shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <div className="flex items-center justify-around h-16 px-2 pb-[env(safe-area-inset-bottom)]">
           <NavItem icon={Home} label="Início" active={isActive('/')} onClick={() => navigate('/')} />
           <NavItem icon={Scissors} label="Serviços" active={false} onClick={() => scrollToSection('servicos')} />
 
           <Link to="/agendamento" className="flex flex-col items-center -mt-6">
-            <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: corPrimaria }}>
+            <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg ring-4 ring-white" style={{ backgroundColor: corPrimaria }}>
               <Plus size={24} className="text-white" />
             </div>
-            <span className="text-[9px] text-[#2b2622]/60 font-medium mt-0.5">Agendar</span>
+            <span className="text-[9px] font-medium mt-0.5 text-[#B67D35]">Agendar</span>
           </Link>
 
           <NavItem icon={Gift} label="Fidelidade" active={isActive('/fidelidade')} onClick={() => navigate('/fidelidade')} />
