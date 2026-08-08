@@ -21,8 +21,15 @@ function hexToHSL(hex) {
 }
 
 function applyConfigToDOM(data) {
-  if (data?.site_title) {
-    document.title = data.site_title;
+  if (data?.site_title || data?.nome_clinica) {
+    document.title = data.site_title || data.nome_clinica;
+    let appleTitle = document.querySelector("meta[name='apple-mobile-web-app-title']");
+    if (!appleTitle) {
+      appleTitle = document.createElement('meta');
+      appleTitle.name = 'apple-mobile-web-app-title';
+      document.head.appendChild(appleTitle);
+    }
+    appleTitle.content = data.site_title || data.nome_clinica;
   }
   if (data?.favicon_url) {
     let link = document.querySelector("link[rel*='icon']");
@@ -32,6 +39,15 @@ function applyConfigToDOM(data) {
       document.head.appendChild(link);
     }
     link.href = data.favicon_url;
+  }
+  if (data?.logo_url) {
+    let touch = document.querySelector("link[rel='apple-touch-icon']");
+    if (!touch) {
+      touch = document.createElement('link');
+      touch.rel = 'apple-touch-icon';
+      document.head.appendChild(touch);
+    }
+    touch.href = '/api/pwa-icon?size=180';
   }
   if (data?.cor_primaria) {
     const hsl = hexToHSL(data.cor_primaria);

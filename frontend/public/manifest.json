@@ -1,6 +1,6 @@
 {
-  "name": "Beleza & Bem-Estar — Estética & Fisioterapia",
-  "short_name": "Beleza & Bem-Estar",
+  "name": "Clinica Calii",
+  "short_name": "Clinica Calii",
   "description": "Agendamento de serviços de estética e fisioterapia.",
   "start_url": "/",
   "scope": "/",
@@ -12,13 +12,13 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/api/pwa-icon?size=192",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/api/pwa-icon?size=512",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
