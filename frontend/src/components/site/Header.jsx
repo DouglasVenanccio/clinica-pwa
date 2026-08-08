@@ -49,17 +49,17 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 min-w-0">
             {config?.logo_url ? (
-              <img src={config.logo_url} alt={clinicName} className="h-11 w-auto object-contain" />
+              <img src={config.logo_url} alt={clinicName} className="h-11 w-auto object-contain shrink-0" />
             ) : (
-              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ backgroundColor: corPrimaria }}>
+              <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: corPrimaria }}>
                 <span className="text-white font-display font-bold text-base">B</span>
               </div>
             )}
-            <span className="font-display font-semibold text-[17px] text-[#2b2622] tracking-tight leading-none">
-              {clinicName}
-              <span className="block lg:hidden font-corpo text-[10px] text-[#2b2622]/50 font-medium mt-1">
+            <span className="font-display font-semibold text-[17px] text-[#2b2622] tracking-tight leading-none min-w-0">
+              <span className="block truncate">{clinicName}</span>
+              <span className="block lg:hidden font-corpo text-[10px] text-[#2b2622]/50 font-medium mt-1 truncate">
                 Estética &amp; Fisioterapia
               </span>
             </span>
@@ -77,7 +77,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             {isAuthenticated ? (
               <div className="relative">
                 <button
