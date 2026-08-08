@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcrypt";
 import prisma from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-helpers";
 
@@ -110,13 +111,78 @@ export async function PUT(request: NextRequest) {
     const usuario = await prisma.usuario.update({
       where: { id },
       data,
-      select: { id: true, nome: true, email: true, role: true, ativo: true },
+      select: { id: true, nome: true, email: true, role: true, ativo: true, cliente: { select: { id: true } }, profissional: { select: { id: true } } },
     });
+
+    // Garantir que exista o registro Cliente quando o papel for CLIENTE
+    if (role === "CLIENTE" && !usuario.cliente) {
+      await prisma.cliente.create({ data: { usuarioId: id } });
+    }
+    // Garantir que exista o registro Profissional quando o papel for PROFISSIONAL
+    if (role === "PROFISSIONAL" && !usuario.profissional) {
+      await prisma.profissional.create({
+        data: { usuarioId: id, especialidade: "Geral" },
+      });
+    }
 
     return NextResponse.json({ usuario });
   } catch (error) {
     console.error("Erro ao atualizar usuario:", error);
     return NextResponse.json({ error: "Erro ao atualizar usuario." }, { status: 500 });
+  }
+}
+
+/**
+ * POST /api/usuarios
+ * Cria um novo usuario (convite feito pelo admin).
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const session = await requireAdmin();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await request.json();
+    const { nome, email, telefone, role, especialidade } = body;
+
+    if (!nome || !email) {
+      return NextResponse.json({ error: "Nome e email sao obrigatorios." }, { status: 400 });
+    }
+
+    const rolesValidos = ["CLIENTE", "PROFISSIONAL", "ADMIN"];
+    const roleFinal = rolesValidos.includes(role) ? role : "CLIENTE";
+
+    const existingUser = await prisma.usuario.findUnique({ where: { email } });
+    if (existingUser) {
+      return NextResponse.json({ error: "Email ja cadastrado." }, { status: 409 });
+    }
+
+    const senhaPadrao = "12345678";
+    const hashedPassword = await bcrypt.hash(senhaPadrao, 12);
+
+    const usuario = await prisma.usuario.create({
+      data: {
+        nome,
+        email,
+        telefone: telefone || "",
+        role: roleFinal as any,
+        senha: hashedPassword,
+      },
+      select: { id: true, nome: true, email: true, role: true },
+    });
+
+    if (roleFinal === "CLIENTE") {
+      await prisma.cliente.create({ data: { usuarioId: usuario.id } });
+    }
+    if (roleFinal === "PROFISSIONAL") {
+      await prisma.profissional.create({
+        data: { usuarioId: usuario.id, especialidade: especialidade || "Geral" },
+      });
+    }
+
+    return NextResponse.json({ usuario }, { status: 201 });
+  } catch (error) {
+    console.error("Erro ao criar usuario:", error);
+    return NextResponse.json({ error: "Erro ao criar usuario." }, { status: 500 });
   }
 }
 

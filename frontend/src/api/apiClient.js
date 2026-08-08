@@ -414,6 +414,13 @@ const User = {
     const data = await request(`/usuarios${qs ? '?' + qs : ''}`);
     return data.usuarios || data;
   },
+  async create(d) {
+    const data = await request('/usuarios', {
+      method: 'POST',
+      body: JSON.stringify(d),
+    });
+    return data;
+  },
   async update(id, d) {
     const data = await request('/usuarios', {
       method: 'PUT',
