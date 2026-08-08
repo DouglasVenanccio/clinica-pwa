@@ -43,7 +43,8 @@ const profissionalGroups = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
       { icon: CalendarDays, label: 'Meus Agendamentos', href: '/dashboard/agendamentos' },
-      { icon: CalendarClock, label: 'Meus Horários', href: '/dashboard/disponibilidade' },
+      { icon: CalendarClock, label: 'Meus Horarios', href: '/dashboard/disponibilidade' },
+      { icon: UserCog, label: 'Painel Colaborador', href: '/painel-colaborador' },
     ],
   },
 ];

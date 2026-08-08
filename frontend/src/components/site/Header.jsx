@@ -129,6 +129,15 @@ export default function Header() {
                             Painel
                           </Link>
                         )}
+                        {user?.role === 'PROFISSIONAL' && (
+                          <Link
+                            to="/painel-colaborador"
+                            className="flex items-center gap-2 px-4 py-2 text-sm text-[#2b2622]/70 hover:bg-[#F5EFE6] hover:text-[#2b2622]"
+                          >
+                            <User size={15} />
+                            Painel do Colaborador
+                          </Link>
+                        )}
                       </div>
                       <div className="border-t border-[#E0DCD6] pt-1">
                         <button

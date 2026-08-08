@@ -22,6 +22,7 @@ import UsersAdmin from '@/pages/admin/UsersAdmin';
 import Avaliacao from '@/pages/Avaliacao';
 import Fidelidade from '@/pages/Fidelidade';
 import MeusAgendamentos from '@/pages/MeusAgendamentos';
+import PainelColaborador from '@/pages/PainelColaborador';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -47,6 +48,7 @@ function App() {
               <Route path="/esqueci-senha" element={<ForgotPassword />} />
               <Route path="/redefinir-senha" element={<ResetPassword />} />
               <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Admin /></ProtectedRoute>} />
+              <Route path="/painel-colaborador" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><PainelColaborador /></ProtectedRoute>} />
               <Route path="/dashboard/agendamentos" element={<ProtectedRoute allowedRoles={["ADMIN", "PROFISSIONAL"]}><Appointments /></ProtectedRoute>} />
               <Route path="/dashboard/servicos" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ServicesAdmin /></ProtectedRoute>} />
               <Route path="/dashboard/profissionais" element={<ProtectedRoute allowedRoles={["ADMIN"]}><ProfessionalsAdmin /></ProtectedRoute>} />
