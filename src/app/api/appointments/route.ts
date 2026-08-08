@@ -3,6 +3,15 @@ import prisma from "@/lib/prisma";
 import { stripSensitiveMany, mapProfissional } from "@/lib/api-helpers";
 
 /**
+ * Converte um campo Time do Prisma (Date) para string "HH:MM".
+ */
+function timeToString(d: Date | string | null | undefined): string {
+  if (!d) return "";
+  if (typeof d === "string") return d.substring(11, 16);
+  return d.toISOString().substring(11, 16);
+}
+
+/**
  * GET /api/appointments
  * Lista agendamentos com joins de cliente/servico/profissional.
  */
@@ -72,8 +81,8 @@ export async function GET(request: NextRequest) {
       servicoNome: a.servico?.nome || "",
       profissionalNome: a.profissional?.usuario?.nome || "",
       data: a.data,
-      horaInicio: a.horaInicio,
-      horaFim: a.horaFim,
+      horaInicio: timeToString(a.horaInicio),
+      horaFim: timeToString(a.horaFim),
       valorTotal: a.valorTotal,
       status: a.status,
       formaPagamento: a.formaPagamento,
@@ -173,7 +182,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ appointment: { ...agendamento, profissional: mapProfissional(agendamento.profissional) } }, { status: 201 });
+    return NextResponse.json({ appointment: { ...agendamento, horaInicio: timeToString(agendamento.horaInicio), horaFim: timeToString(agendamento.horaFim), profissional: mapProfissional(agendamento.profissional) } }, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar agendamento:", error);
     return NextResponse.json({ error: "Erro ao criar agendamento." }, { status: 500 });

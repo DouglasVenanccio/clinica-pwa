@@ -34,13 +34,24 @@ export async function GET(request: NextRequest) {
       const prof = (horariosProf as any)[0]?.profissional;
       if (!prof) continue;
 
+      // O frontend espera slots de hora em hora separados por virgula
+      // (ex: "08:00,09:00,10:00,11:00"). O schema guarda ranges por dia
+      // (horaInicio/horaFim), entao expandimos o range em slots de 1h.
       const slots: Record<string, string> = {};
       const diasComHorario = new Set<number>();
       for (const h of horariosProf as any[]) {
         const dayName = days[h.diaSemana] || "";
-        const ini = new Date(h.horaInicio).toISOString().substring(11, 16);
-        const fim = new Date(h.horaFim).toISOString().substring(11, 16);
-        slots[dayName] = `${ini}-${fim}`;
+        const iniStr = new Date(h.horaInicio).toISOString().substring(11, 16);
+        const fimStr = new Date(h.horaFim).toISOString().substring(11, 16);
+        const [hi, mi] = iniStr.split(":").map(Number);
+        const [hf, mf] = fimStr.split(":").map(Number);
+        const iniMin = hi * 60 + mi;
+        const fimMin = hf * 60 + mf;
+        const lista: string[] = [];
+        for (let m = iniMin; m < fimMin; m += 60) {
+          lista.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
+        }
+        slots[dayName] = lista.join(",");
         diasComHorario.add(h.diaSemana);
       }
 

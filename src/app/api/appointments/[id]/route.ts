@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { mapProfissional } from "@/lib/api-helpers";
 
+/**
+ * Converte um campo Time do Prisma (Date) para string "HH:MM".
+ */
+function timeToString(d: Date | string | null | undefined): string {
+  if (!d) return "";
+  if (typeof d === "string") return d.substring(11, 16);
+  return d.toISOString().substring(11, 16);
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -55,7 +64,7 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json({ appointment: { ...agendamento, profissional: mapProfissional(agendamento.profissional) } });
+    return NextResponse.json({ appointment: { ...agendamento, horaInicio: timeToString(agendamento.horaInicio), horaFim: timeToString(agendamento.horaFim), profissional: mapProfissional(agendamento.profissional) } });
   } catch (error) {
     console.error("Erro ao atualizar agendamento:", error);
     return NextResponse.json({ error: "Erro ao atualizar agendamento." }, { status: 500 });
