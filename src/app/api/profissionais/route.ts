@@ -75,39 +75,47 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(body.senha || "12345678", 12);
 
-    const usuario = await prisma.usuario.create({
-      data: {
-        nome: body.nome,
-        email: body.email,
-        senha: hashedPassword,
-        telefone: body.telefone,
-        avatar: body.avatar,
-        role: "PROFISSIONAL",
-      },
-    });
+    const profissional = await prisma.$transaction(async (tx) => {
+      const usuario = await tx.usuario.create({
+        data: {
+          nome: body.nome,
+          email: body.email,
+          senha: hashedPassword,
+          telefone: body.telefone,
+          avatar: body.avatar,
+          role: "PROFISSIONAL",
+        },
+      });
 
-    const profissional = await prisma.profissional.create({
-      data: {
-        usuarioId: usuario.id,
-        especialidade: body.especialidade,
-        bio: body.bio,
-      },
-      select: {
-        id: true,
-        usuarioId: true,
-        especialidade: true,
-        bio: true,
-        ativo: true,
-        avaliacaoMedia: true,
-        totalAvaliacoes: true,
-        criadoEm: true,
-        usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
-      },
+      return tx.profissional.create({
+        data: {
+          usuarioId: usuario.id,
+          especialidade: body.especialidade,
+          bio: body.bio,
+        },
+        select: {
+          id: true,
+          usuarioId: true,
+          especialidade: true,
+          bio: true,
+          ativo: true,
+          avaliacaoMedia: true,
+          totalAvaliacoes: true,
+          criadoEm: true,
+          usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
+        },
+      });
     });
 
     return NextResponse.json({ profissional: mapProfissional(profissional) }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao criar profissional:", error);
+    if (error?.code === "P2002") {
+      return NextResponse.json(
+        { error: "Já existe um usuário cadastrado com este e-mail." },
+        { status: 409 }
+      );
+    }
     return NextResponse.json(
       { error: "Erro ao criar profissional." },
       { status: 500 }
