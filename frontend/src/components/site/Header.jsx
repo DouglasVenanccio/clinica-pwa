@@ -47,13 +47,15 @@ export default function Header() {
     const t = setTimeout(() => {
       const inner = document.querySelector('header .max-w-7xl');
       const row = document.querySelector('header .max-w-7xl > div');
+      const hdr = document.querySelector('header');
       const ir = inner ? inner.getBoundingClientRect() : null;
       const rr = row ? row.getBoundingClientRect() : null;
+      const hd = hdr ? hdr.getBoundingClientRect() : null;
       const els = Array.from(document.querySelectorAll('header a, header button')).map((el) => {
         const r = el.getBoundingClientRect();
         return `${el.tagName}:${el.getAttribute('aria-label') || el.textContent.trim().substring(0, 12)||el.className.substring(0,10)}@${Math.round(r.left)},${Math.round(r.width)}`;
       });
-      document.title = 'MEASURE|vw=' + window.innerWidth + '|bodyW=' + document.body.scrollWidth + '|htmlW=' + document.documentElement.scrollWidth + '|inner=' + (ir ? Math.round(ir.left) + ',' + Math.round(ir.width) : 'x') + '|row=' + (rr ? Math.round(rr.left) + ',' + Math.round(rr.width) : 'x') + '|' + els.join('|');
+      document.title = 'MEASURE|vw=' + window.innerWidth + '|swBody=' + document.body.scrollWidth + '|swDoc=' + document.documentElement.scrollWidth + '|hdr=' + (hd ? Math.round(hd.left) + ',' + Math.round(hd.width) + ',sw=' + hdr.scrollWidth : 'x') + '|inner=' + (ir ? Math.round(ir.left) + ',' + Math.round(ir.width) + ',sw=' + inner.scrollWidth : 'x') + '|row=' + (rr ? Math.round(rr.left) + ',' + Math.round(rr.width) + ',sw=' + row.scrollWidth : 'x') + '|' + els.join('|');
     }, 3000);
     return () => clearTimeout(t);
   }, []);
