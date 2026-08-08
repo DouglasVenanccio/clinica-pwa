@@ -43,6 +43,17 @@ export default function Header() {
     ? user.nome.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()
     : '?';
 
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const els = Array.from(document.querySelectorAll('header a, header button')).map((el) => {
+        const r = el.getBoundingClientRect();
+        return `${el.tagName}:${el.getAttribute('aria-label') || el.textContent.trim().substring(0, 12)||el.className.substring(0,10)}@${Math.round(r.left)},${Math.round(r.width)}`;
+      });
+      document.title = 'MEASURE|' + els.join('|');
+    }, 3000);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <header
       className="fixed top-0 inset-x-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md shadow-[0_1px_0_rgba(224,220,214,0.8)]"
