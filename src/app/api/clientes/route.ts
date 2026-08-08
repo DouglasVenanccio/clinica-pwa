@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       where.OR = [
         { usuario: { nome: { contains: search, mode: "insensitive" } } },
         { usuario: { email: { contains: search, mode: "insensitive" } } },
-        { telefone: { contains: search, mode: "insensitive" } },
+        { usuario: { telefone: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           pontosFidelidade: true,
-          telefone: true,
           usuario: {
             select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true, criadoEm: true },
           },
@@ -58,7 +57,7 @@ export async function GET(request: NextRequest) {
         id: c.id,
         nome: c.usuario.nome,
         email: c.usuario.email,
-        telefone: c.telefone || c.usuario.telefone || "",
+        telefone: c.usuario.telefone || "",
         pontosFidelidade: c.pontosFidelidade,
         totalGasto,
         totalAgendamentos: c.agendamentos.length,

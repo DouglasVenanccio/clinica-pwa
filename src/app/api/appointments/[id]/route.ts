@@ -37,7 +37,6 @@ export async function PUT(
           select: {
             id: true,
             pontosFidelidade: true,
-            telefone: true,
             usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
           },
         },

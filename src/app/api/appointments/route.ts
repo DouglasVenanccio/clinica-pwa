@@ -44,7 +44,6 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             pontosFidelidade: true,
-            telefone: true,
             usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
           },
         },
@@ -156,7 +155,6 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             pontosFidelidade: true,
-            telefone: true,
             usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
           },
         },
