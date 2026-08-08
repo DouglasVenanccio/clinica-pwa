@@ -30,7 +30,7 @@ export default function UsersAdmin() {
     setLoading(true);
     try {
       const data = await api.User.list({ search, role: filterRole });
-      setUsers(data.usuarios || []);
+      setUsers(data || []);
     } catch {
       setUsers([]);
     } finally {
