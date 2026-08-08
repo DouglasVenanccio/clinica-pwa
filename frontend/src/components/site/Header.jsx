@@ -15,19 +15,12 @@ const navLinks = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
   const { config } = useConfig();
   const clinicName = config?.nome_clinica || 'Beleza & Bem-Estar';
   const corPrimaria = config?.cor_primaria || '#B67D35';
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -51,9 +44,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#FDFBF7]/95 backdrop-blur-md shadow-[0_1px_0_rgba(224,220,214,0.8)]' : 'bg-transparent'
-      }`}
+      className="fixed top-0 inset-x-0 z-50 bg-[#FDFBF7]/95 backdrop-blur-md shadow-[0_1px_0_rgba(224,220,214,0.8)]"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-20">
