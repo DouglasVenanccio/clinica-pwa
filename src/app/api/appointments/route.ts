@@ -12,6 +12,35 @@ function timeToString(d: Date | string | null | undefined): string {
 }
 
 /**
+ * Mapeia o status enviado pelo frontend (ingles/minusculo) para o enum Prisma.
+ */
+const STATUS_MAP: Record<string, string> = {
+  pending: "PENDENTE",
+  confirmed: "CONFIRMADO",
+  cancelled: "CANCELADO",
+  completed: "CONCLUIDO",
+  no_show: "NAO_COMPARECEU",
+  "no-show": "NAO_COMPARECEU",
+  PENDENTE: "PENDENTE",
+  CONFIRMADO: "CONFIRMADO",
+  CANCELADO: "CANCELADO",
+  CONCLUIDO: "CONCLUIDO",
+  NAO_COMPARECEU: "NAO_COMPARECEU",
+};
+
+/**
+ * Mapeia a forma de pagamento do frontend para o enum Prisma.
+ */
+const PAGAMENTO_MAP: Record<string, string> = {
+  pix: "PIX",
+  credit: "CARTAO_CREDITO",
+  debit: "CARTAO_DEBITO",
+  PIX: "PIX",
+  CARTAO_CREDITO: "CARTAO_CREDITO",
+  CARTAO_DEBITO: "CARTAO_DEBITO",
+};
+
+/**
  * GET /api/appointments
  * Lista agendamentos com joins de cliente/servico/profissional.
  */
@@ -146,8 +175,8 @@ export async function POST(request: NextRequest) {
         data: new Date(body.date || new Date()),
         horaInicio: new Date(`1970-01-01T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`),
         horaFim: new Date(`1970-01-01T${String(h + 1).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`),
-        status: (body.status?.toUpperCase() || "PENDENTE") as any,
-        formaPagamento: body.paymentMethod?.toUpperCase() || "PIX" as any,
+        status: (STATUS_MAP[body.status] || "PENDENTE") as any,
+        formaPagamento: (PAGAMENTO_MAP[body.paymentMethod] || "PIX") as any,
         valorTotal: body.totalPrice || 0,
         observacoes: "",
       },

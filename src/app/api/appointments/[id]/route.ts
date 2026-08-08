@@ -11,6 +11,35 @@ function timeToString(d: Date | string | null | undefined): string {
   return d.toISOString().substring(11, 16);
 }
 
+/**
+ * Mapeia o status enviado pelo frontend (ingles/minusculo) para o enum Prisma.
+ */
+const STATUS_MAP: Record<string, string> = {
+  pending: "PENDENTE",
+  confirmed: "CONFIRMADO",
+  cancelled: "CANCELADO",
+  completed: "CONCLUIDO",
+  no_show: "NAO_COMPARECEU",
+  "no-show": "NAO_COMPARECEU",
+  PENDENTE: "PENDENTE",
+  CONFIRMADO: "CONFIRMADO",
+  CANCELADO: "CANCELADO",
+  CONCLUIDO: "CONCLUIDO",
+  NAO_COMPARECEU: "NAO_COMPARECEU",
+};
+
+/**
+ * Mapeia a forma de pagamento do frontend para o enum Prisma.
+ */
+const PAGAMENTO_MAP: Record<string, string> = {
+  pix: "PIX",
+  credit: "CARTAO_CREDITO",
+  debit: "CARTAO_DEBITO",
+  PIX: "PIX",
+  CARTAO_CREDITO: "CARTAO_CREDITO",
+  CARTAO_DEBITO: "CARTAO_DEBITO",
+};
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,8 +49,8 @@ export async function PUT(
     const body = await request.json();
 
     const data: Record<string, unknown> = {};
-    if (body.status) data.status = body.status.toUpperCase();
-    if (body.paymentMethod) data.formaPagamento = body.paymentMethod.toUpperCase();
+    if (body.status) data.status = STATUS_MAP[body.status] || body.status;
+    if (body.paymentMethod) data.formaPagamento = PAGAMENTO_MAP[body.paymentMethod] || body.paymentMethod;
     if (body.totalPrice !== undefined) data.valorTotal = body.totalPrice;
     if (body.date) data.data = new Date(body.date);
     if (body.time) {
