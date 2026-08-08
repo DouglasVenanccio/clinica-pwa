@@ -37,6 +37,15 @@ function applyConfigToDOM(data) {
     const hsl = hexToHSL(data.cor_primaria);
     if (hsl) document.documentElement.style.setProperty('--primary', hsl);
   }
+  if (data?.cor_primaria) {
+    let themeColor = document.querySelector("meta[name='theme-color']");
+    if (!themeColor) {
+      themeColor = document.createElement('meta');
+      themeColor.name = 'theme-color';
+      document.head.appendChild(themeColor);
+    }
+    themeColor.content = data.cor_primaria;
+  }
   if (data?.cor_fundo) {
     const hsl = hexToHSL(data.cor_fundo);
     if (hsl) {
