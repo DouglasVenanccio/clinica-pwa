@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { mapProfissional } from "@/lib/api-helpers";
 
 export async function PUT(
   request: NextRequest,
@@ -30,13 +31,14 @@ export async function PUT(
         especialidade: true,
         bio: true,
         ativo: true,
-        rating: true,
+        avaliacaoMedia: true,
+        totalAvaliacoes: true,
         criadoEm: true,
         usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
       },
     });
 
-    return NextResponse.json({ profissional });
+    return NextResponse.json({ profissional: mapProfissional(profissional) });
   } catch (error) {
     console.error("Erro ao atualizar profissional:", error);
     return NextResponse.json(

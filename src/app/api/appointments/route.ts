@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { stripSensitiveMany } from "@/lib/api-helpers";
+import { stripSensitiveMany, mapProfissional } from "@/lib/api-helpers";
 
 /**
  * GET /api/appointments
@@ -54,7 +54,8 @@ export async function GET(request: NextRequest) {
             especialidade: true,
             bio: true,
             ativo: true,
-            rating: true,
+            avaliacaoMedia: true,
+            totalAvaliacoes: true,
             usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
           },
         },
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest) {
       formaPagamento: a.formaPagamento,
       criadoEm: a.criadoEm,
       cliente: a.cliente,
-      profissional: a.profissional,
+      profissional: mapProfissional(a.profissional),
       servico: a.servico,
     }));
 
@@ -165,7 +166,8 @@ export async function POST(request: NextRequest) {
             especialidade: true,
             bio: true,
             ativo: true,
-            rating: true,
+            avaliacaoMedia: true,
+            totalAvaliacoes: true,
             usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
           },
         },
@@ -173,7 +175,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ appointment: agendamento }, { status: 201 });
+    return NextResponse.json({ appointment: { ...agendamento, profissional: mapProfissional(agendamento.profissional) } }, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar agendamento:", error);
     return NextResponse.json({ error: "Erro ao criar agendamento." }, { status: 500 });

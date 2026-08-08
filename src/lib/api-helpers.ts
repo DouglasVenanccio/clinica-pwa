@@ -16,6 +16,16 @@ export function stripSensitiveMany(users: Record<string, unknown>[]) {
 }
 
 /**
+ * Converte um registro de Profissional do Prisma para o formato consumido
+ * pelo frontend, renomeando avaliacaoMedia/totalAvaliacoes para rating/reviews.
+ */
+export function mapProfissional<T extends Record<string, any> | null | undefined>(p: T): any {
+  if (!p) return p;
+  const { avaliacaoMedia, totalAvaliacoes, ...rest } = p;
+  return { ...rest, rating: Number(avaliacaoMedia || 0), reviews: Number(totalAvaliacoes || 0) };
+}
+
+/**
  * Check if the request has a valid session. Returns the session or null.
  * Use this to protect API routes that require authentication.
  */

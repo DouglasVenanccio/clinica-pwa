@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
-import { stripSensitiveMany } from "@/lib/api-helpers";
+import { stripSensitiveMany, mapProfissional } from "@/lib/api-helpers";
 
 /**
  * GET /api/profissionais?servicoId=xxx
@@ -25,7 +25,8 @@ export async function GET(request: NextRequest) {
               especialidade: true,
               bio: true,
               ativo: true,
-              rating: true,
+              avaliacaoMedia: true,
+              totalAvaliacoes: true,
               criadoEm: true,
               usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
             },
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
       });
 
       profissionais = profServicos
-        .map((ps) => ps.profissional)
+        .map((ps) => mapProfissional(ps.profissional))
         .filter((p) => p.ativo);
     } else {
       const allProf = await prisma.profissional.findMany({
@@ -45,12 +46,13 @@ export async function GET(request: NextRequest) {
           especialidade: true,
           bio: true,
           ativo: true,
-          rating: true,
+          avaliacaoMedia: true,
+          totalAvaliacoes: true,
           criadoEm: true,
           usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
         },
       });
-      profissionais = allProf;
+      profissionais = allProf.map(mapProfissional);
     }
 
     return NextResponse.json({ profissionais });
@@ -96,13 +98,14 @@ export async function POST(request: NextRequest) {
         especialidade: true,
         bio: true,
         ativo: true,
-        rating: true,
+        avaliacaoMedia: true,
+        totalAvaliacoes: true,
         criadoEm: true,
         usuario: { select: { id: true, nome: true, email: true, telefone: true, avatar: true, role: true } },
       },
     });
 
-    return NextResponse.json({ profissional }, { status: 201 });
+    return NextResponse.json({ profissional: mapProfissional(profissional) }, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar profissional:", error);
     return NextResponse.json(
